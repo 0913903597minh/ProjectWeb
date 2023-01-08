@@ -1,0 +1,135 @@
+﻿@{
+    Layout = null;
+}
+@model IEnumerable<Order>
+@using PagedList;
+@using PagedList.Mvc;
+<style>
+    a {
+        cursor: pointer !important;
+    }
+</style>
+<label>Tổng kết quả tìm kiếm : @ViewBag.count</label>
+<br />
+<label>
+    Tổng tiền theo tìm kiếm :  @string.Format("{0:#,0}", ViewBag.revenue) VNĐ
+</label>
+<table class="table table-bordered table-responsive-sm  table-hover">
+    <thead>
+        <tr>
+            <th>Mã hóa đơn</th>
+            <th>Tên khách</th>
+            <th>Địa chỉ</th>
+            <th>Trạng thái</th>
+            @*<th>Giảm giá</th>*@
+            <th>Tổng tiền</th>
+            @*<th>Ghi chú</th>*@
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Count() == 0)
+        {
+            <tr>
+                <td colspan="6" class="text-center">
+                    <div class=" text-danger">
+                        Không có dữ liệu!
+                    </div>
+                </td>
+            </tr>
+        }
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @item.order_code<br />
+                    <label>Hình thức thanh toán : @ProjectWeb.Configuration.ViewConfig.StatusToDictionaryPay[item.type.Value]</label>
+                </td>
+                <td>
+                    <div class="form-group">
+                        <h6 class="mb-0"> @item.buyer_name</h6>
+                        <span class="text-muted font-weight-normal font-italic d-block">@item.phone</span>
+                    </div>
+                </td>
+                <td>
+                    @item.addressto
+                </td>
+                <td>
+                    <span class="badge ">@ProjectWeb.Configuration.OrderConfig.StatusToDictionaryHTML[item.order_status.Value]</span>
+                </td>
+                @*<td>
+                        @item.order_code - @item.discount
+                    </td>*@
+                <td>
+                    @string.Format("{0:#,0}", item.total) VNĐ
+                    <br />
+                    @if (item.type == ProjectWeb.Configuration.ViewConfig.PREPAY_INT)
+                    {
+                        if (item.customer_pay.Value >= item.total.Value || item.order_status == (int)ProjectWeb.Configuration.OrderConfig.Status.FINISH)
+                        {
+                            <label>Đã thanh toán</label>
+                        }
+                        else
+                        {
+                            <label>Chưa thanh toán</label>
+                        }
+                    }
+
+                </td>
+                <td>
+                    <div class="btn-group">
+                        <a data-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-fw fa-wrench"></i>
+                        </a>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" onclick="window.location.href = '/Admin/Order/Detail?id=@item.order_id'">Chi tiết đơn hàng</a>
+                            @if (item.order_status == (int)ProjectWeb.Configuration.OrderConfig.Status.WAIT && item.type == ProjectWeb.Configuration.ViewConfig.PREPAY_INT)
+                            {
+                                <a class="dropdown-item" onclick="Paid(@item.order_id,'@item.order_code')">Thanh toán</a>
+                            }
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        }
+
+    </tbody>
+</table>
+<div class="col-md-12">
+    <div class="row float-right">
+        @*phân trang*@
+        @Html.PagedListPager((IPagedList)Model,
+                       page => Url.Action("Index", new { page = page, paid = ViewBag.paid, status = ViewBag.status, type = ViewBag.type, keysearch = ViewBag.keysearch }),
+                       new PagedListRenderOptions
+                       {
+                       })
+    </div>
+</div>
+<div class="modal fade bd-example-modal-lg" id="modal-form-lg" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" id="content-form-lg">
+
+        </div>
+    </div>
+</div>
+<div class="modal fade bd-example-modal-xl" id="modal-form-xl" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content" id="content-form-xl">
+
+        </div>
+    </div>
+</div>
+<div class="modal fade bd-example-modal-md" id="modal-form-md" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content" id="content-form-md">
+
+        </div>
+    </div>
+</div>
+<div class="modal fade bd-example-modal-sm" id="modal-form-sm" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content" id="content-form-sm">
+
+        </div>
+    </div>
+</div>

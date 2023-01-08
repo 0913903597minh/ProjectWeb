@@ -1,0 +1,161 @@
+﻿@model ProjectWeb.Models.CartModel
+@{
+    //ProjectWeb.Service.CartService cartProvinder = new ProjectWeb.Service.CartService();
+    int i = 0;
+    //string timeout = new ProjectWeb.Service.ConfigService().GetTimeOut_Hours_Cookie();
+    ViewBag.Title = "Giỏ hàng";
+    ProjectWeb.Service.WarehouseService warehouseService = new ProjectWeb.Service.WarehouseService();
+}
+<link href="~/Content/sweetalert/sweetalert2.min.css" rel="stylesheet" />
+<script src="~/Content/sweetalert/sweetalert2.all.min.js"></script>
+
+<div class="shopping-cart">
+    <div class="px-4 px-lg-0">
+
+        <div class="pb-5">
+            <div class="container">
+
+                <h3 class="mt-5 head-page" align="center">Giỏ hàng</h3>
+                @*<div class="row alert alert-danger">
+
+                        <div class="col-lg-12 p-3 " style="font-size:20px">
+                            <p style=""><b>Lưu ý : </b>Giỏ hàng của bạn chỉ tồn tại trong vòng @timeout giờ.</p>
+                        </div>
+                    </div>*@
+                @if (Model.list_order.Count > 0)
+                {
+                    <form id="form-updatecart" action="/Cart/Index" method="post">
+                        <div class="row">
+                            <div class="col-12" id="success">
+                                @Html.ValidationMessage("success", new { @id = "msgsuccess", @style = "font-size:20px" })
+                            </div>
+                            <div class="col-12" id="error">
+                                @Html.ValidationMessage("error", new { @id = "msgerror", @style = "font-size:20px" })
+                            </div>
+                            <div class="col-lg-12 p-5 bg-white rounded shadow-sm mb-5">
+
+                                <!-- Shopping cart table -->
+
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col" class="border-0 bg-light">
+                                                    <div class="p-2 px-3 text-uppercase">Sản phẩm</div>
+                                                </th>
+                                                <th scope="col" class="border-0 bg-light">
+                                                    <div class="py-2 text-uppercase">Đơn giá</div>
+                                                </th>
+                                                <th scope="col" class="border-0 bg-light">
+                                                    <div class="py-2 text-uppercase">Số lượng</div>
+                                                </th>
+                                                <th scope="col" class="border-0 bg-light">
+                                                    <div class="py-2 text-uppercase">Xóa</div>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+
+                                            @foreach (var item in Model.list_order)
+                                            {
+                                                <tr>
+                                                    <th scope="row" class="border-0">
+                                                        <div class="p-2">
+                                                            <div class="ml-3 d-inline-block align-middle">
+                                                                <input type="hidden" name="list_order[@i].warehouse_id" id="WarehouseId" value="@item.warehouse_id" />
+                                                                <h5 class="mb-0"> <span class="text-dark d-inline-block align-middle"> @item.product_name - @item.product_color </span></h5>
+                                                                <span class="text-muted font-weight-normal font-italic d-block">VN : @item.size_VN - US : @item.size_US - UK : @item.size_UK</span>
+                                                            </div>
+                                                        </div>
+                                                    </th>
+                                                    <td class="border-0 align-middle">
+                                                        <strong>@string.Format("{0:#,0}", (Math.Ceiling(Convert.ToDouble(item.product_price) / 1000 * (100 - item.discount) / 100) * 1000)) VNĐ</strong>
+                                                    </td>
+                                                    @{
+                                                        ProjectWeb.Warehouse warehouse = warehouseService.GetById(item.warehouse_id);
+                                                        int maxamount = warehouse.amount ?? 0;
+                                                        <td class="border-0 align-middle">
+                                                    <input type="number" name="list_order[@i].warehouse_amount" id="Amount" max="@maxamount" min="1" class="Price form-control" value="@item.warehouse_amount" /></td>
+                                                    }
+
+                                                    <td class="border-0 align-middle"><a class="text-dark" onclick="Remove(@item.warehouse_id)"><i class="fa fa-times"></i></a></td>
+                                                </tr>
+                                                i++;
+                                            }
+
+
+
+                                        </tbody>
+                                    </table>
+
+                                </div>
+                                <!-- End -->
+                            </div>
+                        </div>
+
+
+                        <div class="row d-flex justify-content-center" style="min-height:38px">
+                            <div class="col-md-2 col-6 ">
+                                <button type="submit" class="btn btn-outline-success btn-block px-4 rounded-pill" @*onclick="UpdateCart();"*@>Cập nhật</button>
+                            </div>
+                            <div class="col-md-2 col-6 ">
+                                <button type="button" class="btn btn-success btn-block px-4 rounded-pill" onclick="window.location.href = '/Cart/Order'">Đặt ngay</button>
+                            </div>
+                        </div>
+                    </form>
+                }
+                else
+                {
+                    <div class="row d-flex justify-content-center mt-3" style="min-height:38px">
+                        @*<div class="col-md-2 col-6 ">
+                                <button type="submit" class="btn btn-outline-success btn-block px-4 rounded-pill">Cập nhật</button>
+                            </div>*@
+                        <div class="col-md-3 col-6 ">
+                            <button class="btn btn-outline-success px-4 rounded-pill btn-block" type="button" onclick="window.location.href = '/ListProduct/Index'"><i class="fa fa-chevron-left"></i> Quay lại đặt hàng</button>
+                        </div>
+                    </div>}
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    //function UpdateCart() {
+    //    var $form = $("#form-updatecart");
+    //    $.ajax({
+    //        type: "POST",
+    //        url: "/Cart/Index",
+    //        data: $form.serialize(),
+    //        success: async function (data, status, xhr) {
+    //            console.log(data)
+    //            await $("#form-updatecart").html($(data).find("#form-updatecart").html());
+    //        }
+    //    });
+    //}
+    if ($("#msgsuccess").html() != "") {
+        $("#success").addClass("alert alert-success")
+    }
+    if ($("#msgerror").html() != "") {
+        $("#error").addClass("alert alert-danger")
+    }
+    function Remove(id) {
+        Swal.fire({
+            title: 'Xóa?',
+            text: "Bạn có chắc muốn xóa sản phẩm ra khỏi giỏ hàng!",
+            showCancelButton: true,
+            confirmButtonColor: '#5cb85c',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Đồng ý',
+            cancelButtonText: 'Hủy'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    type: "POST",
+                    url: "/Cart/RemoveProductFromCart?id=" + id,
+                    success: function (data, status, xhr) {
+                        location.reload();
+                    }
+                });
+            }
+        })
+    }
+</script>

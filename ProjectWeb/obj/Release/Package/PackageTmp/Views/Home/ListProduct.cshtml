@@ -1,0 +1,166 @@
+﻿@using System.Web
+@using ProjectWeb.Configuration
+@model List<Product>
+
+@{
+    Layout = null;
+    var type = ViewBag.Type as string;
+}
+
+@if (Model.Count > 0)
+{
+    <div class="shopping-grid">
+        <div id="content-row-56 " class="nh-row   ">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-12 col-xs-12">
+                        <div class="item_block" data-action="products/ProductsBlock/productBlock/13" data-method="get">
+                            <div class="box-product ">
+                                <div class="tab-product">
+                                    <!--<ul class="nav_title clearfix">-->
+                                    <!--    <li role="presentation" class="active">-->
+                                    <!--        <a href="#box_product_13">Sản phẩm mới</a>-->
+                                    <!--    </li>-->
+                                    <!--</ul>-->
+                                    @if (type == ViewConfig.DISCOUNT)
+                                    {
+                                        <h3><a href="#box_product_13">Giảm giá</a></h3>
+                                        @*<h3 class="hover-title" onclick="window.location.href='/ListProduct/Index?sort=@ViewConfig.DISCOUNT'" align="center">Giảm giá</h3>*@
+                                    }
+                                    @if (type == ViewConfig.MALE)
+                                    {
+                                        @*<h3><a href="#box_product_13">Giày Nam</a></h3>*@
+                                        @*<h3 class="hover-title" onclick="window.location.href='/ListProduct/Index?sex=@ViewConfig.MALE_INT'" align="center">Giày Nam</h3>*@
+                                    }
+                                    @if (type == ViewConfig.FEMALE)
+                                    {
+                                        @*<h3><a href="#box_product_13">Giày nữ</a></h3>*@
+                                        @*<h3 class="hover-title" onclick="window.location.href='/ListProduct/Index?sex=@ViewConfig.FEMALE_INT'" align="center">Giày nữ</h3>*@
+                                    }
+                                    @if (type == ViewConfig.BOY)
+                                    {
+
+                                    }
+                                    @if (type == ViewConfig.GIRL)
+                                    {
+
+                                    }
+                                    @if (type == ViewConfig.PRODUCTNEW)
+                                    {
+                                        <h3><a href="#box_product_13">Sản phẩm mới</a></h3>
+                                        @*<h3 class="hover-title" onclick="window.location.href='/ListProduct/Index?sort=@ViewConfig.PRODUCTNEW'" align="center">Sản phẩm mới</h3>*@
+                                    }
+                                    @if (type == ViewConfig.TOPSALE)
+                                    {
+                                        <h3><a href="#box_product_13">Xu hướng thị trường</a></h3>
+                                        @*<h3 class="hover-title" onclick="window.location.href='/ListProduct/Index?sort=@ViewConfig.TOPSALE'" align="center">Xu hướng thị trường</h3>*@
+                                    }
+                                </div>
+
+                                <div class="content-tab-product">
+                                    <div class="tab-content">
+                                        <div class="tab-pane fade in active">
+                                            <div id="box-product-13-1668482753-266" class="slider-product owl-carousel owl-theme" style="opacity: 1; display: block;">
+                                                <div class="owl-wrapper-outer">
+                                                    <div class="owl-wrapper" style="width: 12000px; left: 0px; display: block;">
+
+                                                        @foreach (var item in Model)
+                                                        {<div class="owl-item" style="width: 300px;">
+                                                                <div class="group-item">
+                                                                    <div class="list-item  col-xs-12 ">
+                                                                        <div class="item-product hover-action-product style-view-2 clearfix">
+                                                                            <span class="status-product bg-red"> @(item.discount.HasValue && item.discount > 0 ?"- "+ item.discount + "%" : "HOT")</span>
+                                                                            <div class="img bg-img-157" title="@item.product_name">
+                                                                                <a href="/ListProduct/DetailProduct?Id=@item.product_id" title="@item.product_name">
+                                                                                    <img src="/Images/Products/@item.avatar_url" alt="" class="img-product">
+                                                                                </a>
+                                                                                @*<div class="action-product">
+                                                                                        <a href="javascript://" class="item-action btn-shop-cart " item-id="199" status-store="">
+                                                                                            Thêm vào giỏ hàng
+                                                                                        </a>
+                                                                                        <a href="javascript://" class="item-action preview-product-modal" product_id="157">
+                                                                                                <i class="fa fa-search"></i>
+                                                                                            </a>
+
+                                                                                            <a href="javascript://" class="item-action btn-compare" product-id="157">
+                                                                                                <i class="fa fa-retweet"></i>
+                                                                                            </a>
+                                                                                    </div>*@
+                                                                            </div>
+                                                                            <div class="info">
+                                                                                <h4 class="title-product">
+                                                                                    <a href="/ListProduct/DetailProduct?Id=@item.product_id" title="@item.product_name">
+                                                                                        @item.product_name
+                                                                                    </a>
+                                                                                </h4>
+                                                                                <div class="price price-inline">
+                                                                                    @if (item.discount.HasValue && item.discount > 0)
+                                                                                    {
+
+                                                                                        <p class="price-before ">
+                                                                                            @item.product_price
+                                                                                            ₫
+                                                                                        </p>
+                                                                                        <p class="price-well">
+                                                                                            @(item.product_price * (100 - item.discount.Value)/100)
+                                                                                            đ
+                                                                                        </p>
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        <p class="price-well">
+                                                                                            @item.product_price
+                                                                                            đ
+                                                                                        </p>
+                                                                                    }
+                                                                                </div>
+                                                                                <div class="content-attr hidden"> </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        }
+                                                    </div>
+                                                </div>
+
+                                                <div class="owl-controls clickable">
+                                                    <div class="owl-buttons">
+                                                        <div class="owl-prev">prev</div>
+                                                        <div class="owl-next">next</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @*<script type="text/javascript">
+                                            var owl = $("#box-product-13-1668482753-266");
+                                            owl.owlCarousel({
+                                                items: "4",
+                                                loop: true,
+                                                lazyLoad: true,
+                                                autoPlay: Boolean(0),
+                                                autoplayTimeout: 5500,
+                                                autoplayHoverPause: true,
+                                                navigation: Boolean(1),
+                                                pagination: Boolean(0),
+                                                animateOut: '  ',
+                                                animateIn: '  ',
+                                                itemsCustom: [
+                                                    [0, "2"],
+                                                    [768, "3"],
+                                                    [1024, "4"],
+                                                ],
+                                            });
+
+                                        </script>*@
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+

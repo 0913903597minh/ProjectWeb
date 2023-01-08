@@ -1,0 +1,279 @@
+﻿@model Product
+@{
+    ViewBag.Title = "Quản lý thông tin sản phẩm";
+}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/froala-editor/2.7.6/css/froala_editor.pkgd.min.css" rel="stylesheet" type="text/css" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/froala-editor/2.7.6/css/froala_style.min.css" rel="stylesheet" type="text/css" />
+<script src="~/Areas/Admin/Scripts/froala_editor.pkgd.min.js"></script>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-6">
+            <h2>Chi tiết sản phẩm</h2>
+        </div>
+    </div>
+
+    <div>
+        <form id="form-addproduct">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card shadow">
+                        <div class="card-body">
+                            <div id="form-info">
+                                <div class="modal-header">
+                                    <h6 class="modal-title">Thông tin sản phẩm</h6>
+                                    <div class="">
+                                        <button type="button" onclick="sumbitProduct()" class="btn btn-primary">Lưu</button>
+                                        <button type="button" onclick="window.location.href='/Admin/Product/Index'" class="btn btn-light">Đóng</button>
+                                    </div>
+                                </div>
+                                <div class="modal-body">
+                                    <div>
+                                        <input type="hidden" name="product_id" value="@Model.product_id" id="Id" />
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-12 col-md-6">
+                                            <div class="form-group">
+                                                <label>Tên giày<span class="text-danger">*</span></label>
+                                                <input type="text" class="form-control" name="product_name" id="Name" value="@Model.product_name" />
+                                                @Html.ValidationMessageFor(model => model.product_name, "", new { @class = "text-danger" })
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Giới tính</label>
+                                                @*<select class="form-control Type " name="type" id="Type" @(Model.product_id > 0 ? "disabled" : "")>*@
+                                                <select class="form-control Type " name="type" id="Type" )>
+                                                    <option value="1" @(Model.type == 1 ? "selected" : "")>Nam</option>
+                                                    <option value="2" @(Model.type == 2 ? "selected" : "")>Nữ</option>
+                                                    <option value="3" @(Model.type == 3 ? "selected" : "")>Bé Trai</option>
+                                                    <option value="4" @(Model.type == 4 ? "selected" : "")>Bé Gái</option>
+                                                </select>
+                                                @Html.ValidationMessageFor(model => model.discount, "", new { @class = "text-danger" })
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Trạng thái</label>
+                                                @Html.DropDownList("product_status", new SelectList(ProjectWeb.Configuration.ProductConfig.StatusToDictionarySelect, "Key", "Value", Model.product_status), new { @class = "form-control select2-no-search" })
+                                                @Html.ValidationMessageFor(model => model.product_status, "", new { @class = "text-danger" })
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Giá<span class="text-danger">*</span></label>
+                                                <input type="number" class="form-control" name="product_price" id="Price" value="@Model.product_price" />
+                                                @Html.ValidationMessageFor(model => model.product_price, "", new { @class = "text-danger" })
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Giảm giá</label>
+                                                <input type="number" class="form-control" name="discount" id="Discount" maxlength="3" value="@Model.discount" />
+                                                @Html.ValidationMessageFor(model => model.discount, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                        <div class="col-12 col-md-6">
+                                            <div class="form-group">
+                                                <label>Hãng</label>
+                                                <select class="form-control" name="brand_id" id="BrandId">
+                                                    <option value="-1">Chọn hãng</option>
+                                                    @foreach (var item in ViewBag.Brand as List<Brand>)
+                                                    {
+                                                        <option value="@item.brand_id" @(item.brand_id == Model.brand_id ? "selected" : "")>@item.brand_name</option>
+                                                    }
+                                                </select>
+                                                @Html.ValidationMessageFor(model => model.brand_id, "", new { @class = "text-danger" })
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Ảnh mẫu</label>
+                                                <input type="file" name="AvatarUrl" id="AvatarUrl" class="AvatarUrl" />
+                                                @if (!string.IsNullOrEmpty(Model.avatar_url))
+                                                {
+                                                    <div style="width:150px;height:150px">
+                                                        <img src="~/Images/Products/@Model.avatar_url" id="avatarimgshow" class="img-thumbnail">
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    <div style="width:150px;height:150px">
+                                                        <img src="" style="display:none" id="avatarimgshow" class="img-thumbnail">
+                                                    </div>
+                                                }
+                                                @Html.ValidationMessageFor(model => model.avatar_url, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-12 col-md-12">
+                                            <div class="form-group">
+                                                <label>Mô tả sản phẩm</label>
+                                                <textarea class="form-control" name="product_describe" id="Describe" rows="4">@Model.product_describe</textarea>
+                                                @Html.ValidationMessageFor(model => model.product_describe, "", new { @class = "text-danger" })
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @Html.ValidationMessage("error", new { @class = "text-danger" })
+                                </div><!-- modal-body -->
+
+                                <script>
+                                $("#AvatarUrl").change(function () {
+                                    $('#avatarimgshow').css('display', 'block');
+                                    if (this.files && this.files[0]) {
+                                        var reader = new FileReader();
+                                        reader.onload = function (e) {
+                                            $('#avatarimgshow').attr('src', e.target.result);
+                                        }
+                                        reader.readAsDataURL(this.files[0]);
+                                    }
+                                });
+                                $(function () {
+                                    $('#Describe').froalaEditor({
+                                    imageUploadURL: '@Url.Action("FroalaUploadImage", "Extend")',
+                                    imageParams: { postId: "123" },
+                                    })
+                                });
+                                </script>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-2">
+                <div class="col-6">
+                    <div class="card shadow">
+                        <div class="card-body">
+                            <div id="form-color">
+
+                                <div class="modal-header">
+                                    <h6 class="modal-title">Danh sách màu</h6>
+                                    @if (Model.product_id > 0)
+                                    {
+                                        <button type="button" class="btn btn-success" onclick="AddProductImg(@Model.product_id)">
+                                            <span aria-hidden="true">+</span>
+                                        </button>
+                                    }
+                                </div>
+                                <div class="modal-body">
+                                    <div class="row">
+                                        <div class="col-12" id="list-productimg" style="max-height:850px;overflow:auto"></div>
+                                    </div>
+                                </div><!-- modal-body -->
+                                <script>
+                                </script>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-6">
+                    <div class="card shadow">
+                        <div class="card-body">
+                            <div id="form-size">
+
+                                <div class="modal-header">
+                                    <h6 class="modal-title">Danh sách kích cỡ</h6>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="row">
+                                        <div class="col-12" id="list-warehouse" style="max-height:850px;overflow:auto">
+                                            <div class="text-center">Vui lòng chọn màu giày để xem các kích cỡ!</div>
+                                        </div>
+                                    </div>
+                                </div><!-- modal-body -->
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade bd-example-modal-md" id="modal-form-md" aria-hidden="true">
+                <div class="modal-dialog modal-md">
+                    <div class="modal-content" id="content-form-md">
+
+                    </div>
+                </div>
+            </div>
+            <script>
+
+    function sumbitProduct() {
+            /*loading(true)*/
+        var notify = ""
+        if (@Model.product_id == 0) {
+            notify = "Thêm sản phẩm thành công"
+        } else {
+            notify = "Sửa thông tin sản phẩm thành công"
+            }
+            var img = new FormData($("#form-addproduct")[0]);
+       /*     var $form = $("#form-addproduct");*/
+        $.ajax({
+            type: "POST",
+            url: "/Admin/Product/AddProduct",
+            data:img,
+            contentType: false,
+            processData: false,
+            success: async function (data, status, xhr) {
+                /*loading(false)*/
+                var statusCode = xhr.getResponseHeader("statusCode");
+                if (statusCode == '401') {
+                    window.location.replace("/login");
+                }
+                if (xhr.status == 201) {
+                    /*loadListProduct()*/
+
+                    $("#modal-form-lg").modal("hide");
+                    Swal.fire({
+                        icon: 'success',
+                        title: notify,
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    await $("#form-addproduct").html($(data).find("#form-addproduct").html());
+                }
+
+            },
+        });
+        /*loading(false)*/
+    }
+        loadListProductImg()
+        function loadListProductImg() {
+            if (@Model.product_id> 0) {
+                $("#list-productimg").load("/Admin/ProductImg/ListProductImg?productid=@Model.product_id")
+                }
+    }
+    function AddProductImg(id) {
+        /*loading(true)*/
+        $("#content-form-md").load("/Admin/ProductImg/AddProductImg?productid=" + id, function (response) {
+            $("#modal-form-md").modal('show');
+        });
+        /*loading(false)*/
+    }
+    function EditProductImg(id, productid) {
+        /*loading(true)*/
+        $("#content-form-md").load("/Admin/ProductImg/AddProductImg?id=" + id + "&productid=" + productid, function (response) {
+            $("#modal-form-md").modal('show');
+        });
+        /*loading(false)*/
+    }
+    function ListWarehouse(id) {
+        $("#list-warehouse").load("/Admin/Warehouse/ListWarehouse?productImgid=" + id)
+    }
+    function AddWarehouse(id) {
+        /*loading(true)*/
+        $("#content-form-md").load("/Admin/Warehouse/AddWarehouse?productImgid=" + id, function (response) {
+            $("#modal-form-md").modal('show');
+        });
+        /*loading(false)*/
+    }
+    function EditWarehouse(id, productimgid) {
+        /*loading(true)*/
+        $("#content-form-lg").load("/Admin/Warehouse/AddWarehouse?id=" + id + "&productImgid=" + productimgid, function (response) {
+            $("#modal-form-lg").modal('show');
+        });
+        /*loading(false)*/
+    }
+                $("#navProduct").addClass("active")
+                $("#navProductShow").addClass("show")
+                $("#iProduct").addClass("active")
+
+            </script>
+        </form>
+
+
+    </div>
+</div>
+

@@ -1,0 +1,29 @@
+﻿@{
+    Layout = null;
+    List<string> listsize =  ViewBag.listDatas as List<string>;
+}
+@model List<Size>
+@if (ViewBag.Type > 0 || ViewBag.Type != null)
+{
+    <label>
+        Kích cỡ<span class="text-danger">*</span>
+    </label>
+    <select class="form-control chosen-select" name="Warehouse.size_id" id="SizeId">
+        @foreach (var item in Model)
+        {
+            <option value="@item.size_id" @(item.size_id == ViewBag.selecteds ? "selected" : "") @(listsize.Contains(item.size_id.ToString()) ? "disabled" : "")> VN : @item.VN - US : @item.US - UK : @item.UK</option>
+        }
+    </select>
+}
+else
+{
+    <label>
+        Kích cỡ<span class="text-danger">*</span>
+    </label>
+    <select class="form-control chosen-select" name="SizeId" id="SizeId" disabled>
+        <option value="0">Chọn kích cỡ</option>
+    </select>
+}
+<script>
+    $(".chosen-select").chosen()
+</script>

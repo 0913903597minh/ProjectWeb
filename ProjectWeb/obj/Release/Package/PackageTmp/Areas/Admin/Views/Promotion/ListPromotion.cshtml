@@ -1,0 +1,96 @@
+﻿@{
+    Layout = null;
+}
+@model IEnumerable<Promotion>
+@using PagedList;
+@using PagedList.Mvc;
+<style>
+    a {
+        cursor: pointer !important;
+    }
+</style>
+<table class="table table-bordered table-responsive-sm  table-hover">
+    <thead>
+        <tr>
+            <th>Mã khuyễn mãi</th>
+            <th>Giảm giá</th>
+            <th>Số lượng</th>
+            <th>Bắt đầu</th>
+            <th>Kết thúc</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Count() == 0)
+        {
+            <tr>
+                <td colspan="6" class="text-center">
+                    <div class=" text-danger">
+                        Không có dữ liệu!
+                    </div>
+                </td>
+            </tr>
+        }
+        @foreach (var item in Model)
+        {
+    <tr>
+        <td>
+            @item.prom_keycode
+        </td>
+        <td>
+            @item.prom_discount
+        </td>
+        @if (item.prom_amount.HasValue)
+        {
+            <td>
+                @item.prom_amount
+            </td>
+        }
+        else
+        {
+            <td>
+                Không giới hạn
+            </td>
+        }
+
+        <td>
+            @(item.prom_startdate.HasValue?item.prom_startdate.Value.ToString("dd/MM/yyyy"): "Không có giá trị")
+        </td>
+        @if (item.prom_expirationdate.HasValue)
+        {
+            <td>
+                @item.prom_expirationdate.Value.ToString("dd/MM/yyyy")
+            </td>
+        }
+        else
+        {
+            <td>
+                Không thời hạn
+            </td>
+        }
+        <td>
+            <div class="btn-group">
+                <a data-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-fw fa-wrench"></i>
+                </a>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" onclick="EditPromotion(@item.prom_id)">Sửa</a>
+                    <a class="dropdown-item" onclick="DeletePromotion(@item.prom_id)">Xóa</a>
+                </div>
+            </div>
+        </td>
+    </tr>
+        }
+
+    </tbody>
+</table>
+<div class="col-md-12">
+    <div class="row float-right">
+        @*phân trang*@
+        @Html.PagedListPager((IPagedList)Model,
+        page => Url.Action("Index", new { page = page }),
+        new PagedListRenderOptions
+        {
+        })
+    </div>
+</div>

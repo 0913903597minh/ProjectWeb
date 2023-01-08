@@ -1,0 +1,66 @@
+﻿@{
+    Layout = null;
+}
+
+<form id="form-changeorder" @*enctype="multipart/form-data" novalidate="novalidate" method="post" action="/ProductImg/AddProductImg"*@>
+    <div class="modal-header">
+        <h6 class="modal-title">Thông tin slide</h6>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div>
+            <input type="hidden" name="slide_id" value="@ViewBag.id" id="Id" />
+        </div>
+        <div class="form-group">
+            <label>Đổi vị trí với ảnh </label>
+            <select class="form-control chosen-select" name="replaceorderid">
+                @foreach (var item in ViewBag.ListSlide as List<ProjectWeb.Slide>)
+                {
+                    <option value="@item.slide_id" @(item.slide_id == ViewBag.replaceorderid ? "selected" : "")>@item.slide_name</option>
+                }
+            </select>
+            @Html.ValidationMessage("replaceorderid", "", new { @class = "text-danger" })
+        </div>
+
+
+        @Html.ValidationMessage("error", new { @class = "text-danger" })
+        <div class="modal-footer">
+            <button type="button" onclick="SubmitChangeOrder()" class="btn btn-primary">Lưu</button>
+            <button type="button" data-dismiss="modal" class="btn btn-light">Đóng</button>
+        </div>
+    </div><!-- modal-body -->
+    <script>
+        function SubmitChangeOrder() {
+            loading(true)
+            var $form = $("#form-changeorder");
+            $.ajax({
+                type: "POST",
+                url: "/Admin/Slide/ChangeOrder",
+                data: $form.serialize(),
+                success: async function (data, status, xhr) {
+                    loading(false)
+                    var statusCode = xhr.getResponseHeader("statusCode");
+                    if (statusCode == '401') {
+                        window.location.replace("/Admin/login");
+                    }
+                    if (xhr.status == 201) {
+                        loadListSlide()
+
+                        $("#modal-form-md").modal("hide");
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Đổi vị trí ảnh thành công',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                    }
+                    await $("#form-changeorder").html($(data).find("#form-changeorder").html());
+                },
+            });
+        }
+
+        $(".chosen-select").chosen();
+    </script>
+</form>

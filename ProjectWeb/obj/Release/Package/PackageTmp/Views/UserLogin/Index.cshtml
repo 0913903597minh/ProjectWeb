@@ -1,0 +1,80 @@
+﻿@{
+    ViewBag.Title = "Đăng nhập";
+}
+
+<div class="col-sm-12">
+    <div class="box bg_gray2 padding">
+        <div class="title_style3">
+            <h3>Đăng nhập</h3>
+        </div>
+        <div class="box-cont row">
+            <form id="login-page" class="center" method="post" action="" novalidate="novalidate">
+                <div class="col-md-8 col-md-offset-2">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label" for="username"> Tên đăng nhập </label>
+                        <div class="col-sm-9">
+                            <input class="form-control required" name="username" type="text" placeholder="Tên đăng nhập hoặc email" autocomplete="false" aria-required="true">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label" for="password">Mật khẩu</label>
+                        <div class="col-sm-9">
+                            <input class="form-control required" name="password" type="password" placeholder="Mật khẩu" autocomplete="false" aria-required="true">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-sm-9 col-sm-offset-3">
+                            <button class="bt btn-default txt-upper margin-r-10 btn-submit" type="submit">
+                                <span class="fa fa-sign-in"></span> <span class="name"> Đăng nhập </span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-sm-9 col-sm-offset-3">
+                            <div class="col-md-6 col-sm-6 col-xs-12 no-padding-left margin-b-10">
+                                <span id="login-facebook" onclick="nh_member.FB_login($('#login-modal'),'page');" style="color: #fff" class="btn btn-block btn-social btn-facebook" data-max-rows="1" data-size="medium" data-show-faces="false" data-auto-logout-link="true"> <span class="fa fa-facebook"></span> Đăng nhập bằng facebook </span>
+                            </div>
+                            <div class="col-md-6 col-sm-6 col-xs-12 no-padding-left margin-b-10">
+                                <span id="login-google" onclick="nh_member.GOOGLE_login($('#login-modal'),'page');" style="color: #fff" class="btn btn-block btn-social btn-google">
+                                    <span class="fa fa-google"></span> Đăng nhập bằng google
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-sm-9 col-sm-offset-3">
+                            <div class="col-xs-12 no-padding-left">
+                                <a class="btn-register" href="~/UserRegister/Index"> Đăng ký tài khoản </a>
+                            </div>
+                            <div class="col-xs-12 no-padding-left">
+                                <a class="btn-forget" href="/member/manager-account/forget-password"> Quên mật khẩu </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="clearfix"></div>
+                @*<div class="warp-loading-block hidden">
+                    <div class="warp-bg"></div>
+                    <div class="sk-cube-grid ajax-loading-icon">
+                        <div class="sk-cube sk-cube1"></div>
+                        <div class="sk-cube sk-cube2"></div>
+                        <div class="sk-cube sk-cube3"></div>
+                        <div class="sk-cube sk-cube4"></div>
+                        <div class="sk-cube sk-cube5"></div>
+                        <div class="sk-cube sk-cube6"></div>
+                        <div class="ksk-cube sk-cube7"></div>
+                        <div class="sk-cube sk-cube8"></div>
+                        <div class="sk-cube sk-cube9"></div>
+                    </div>
+                </div>*@
+            </form>
+        </div>
+    </div>
+</div>
+

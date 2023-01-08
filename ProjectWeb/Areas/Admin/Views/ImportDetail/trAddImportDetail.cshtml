@@ -1,0 +1,29 @@
+﻿@model ImportDetail
+
+@{
+    ProjectWeb.Service.WarehouseService warehouseService = new ProjectWeb.Service.WarehouseService();
+}
+<tr class="row-importdetail">
+    <td>
+        @{
+            Warehouse warehouse = warehouseService.GetById(Model.warehouse_id.Value);
+            <div class="form-group">
+                <input type="hidden" class="@Model.Warehouse.productimg_id"  value="@Model.Warehouse.size_id" />
+                <input type="hidden" class="WarehouseId" value="@Model.warehouse_id" />
+                <h6 class="mb-0"> @warehouse.ProductImg.Product.product_name - @warehouse.ProductImg.color</h6>
+                <span class="text-muted font-weight-normal font-italic d-block" style="font-size:11px">VN : @warehouse.Size.VN - US : @warehouse.Size.US - UK : @warehouse.Size.UK</span>
+            </div>
+        }
+    </td>
+    <td>
+
+        <input type="number" class="Amount form-control" onchange="UpdateImport()"  min="1" value="@Model.amount" />
+    </td>
+    <td>
+        @*@item.Price*@
+        <input type="number" min="10000" onchange="UpdateImport()" class="Price form-control"  value="@Model.price" />
+    </td>
+    <td>
+        <a onclick="RemoveImport(this);"> <i class="fa fa-times"></i></a>
+    </td>
+</tr>

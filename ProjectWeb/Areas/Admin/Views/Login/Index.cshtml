@@ -1,0 +1,52 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <meta name="description" content="Admin">
+    <meta name="author" content="Admin">
+
+    <title>Admin </title>
+
+    <link href="~/Areas/Admin/Contents/login.css" rel="stylesheet" />
+    <link href="~/Areas/Admin/Contents/PagedList.css" rel="stylesheet" />
+
+</head>
+<body>
+    <div class="form">
+
+        <form class="user login-card-from m-0" method="post">
+            <h1 class="h3 mb-3 fw-normal">Đăng nhập</h1>
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="backURL" value="@ViewBag.backURL" />
+            <div class="form-group mt-5">
+                <input type="text" class="form-control form-control-user" id="UserName" name="UserName" placeholder="Tài khoản">
+                <p style="color:red">
+                    @Html.ValidationMessage("UserName", "", new { @class = "text-danger" })
+                </p>
+            </div>
+            <div class="form-group">
+                <input type="password" class="form-control form-control-user" id="Password" name="Password" placeholder="Mật khẩu">
+                <p style="color:red">
+                    @Html.ValidationMessage("Password", "", new { @class = "text-danger" })
+                </p>
+            </div>
+            <p style="color:red">
+                @Html.ValidationMessage("error", "", new { @class = "text-danger" })
+            </p>
+            <div class="form-group mt-5">
+                <button type="submit" class="btn btn-primary btn-user btn-block">
+                    Đăng nhập
+                </button>
+            </div>
+        </form>
+    </div>
+
+</body>
+</html>
+

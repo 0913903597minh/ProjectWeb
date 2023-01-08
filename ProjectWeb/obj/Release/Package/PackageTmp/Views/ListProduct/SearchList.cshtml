@@ -1,0 +1,145 @@
+﻿@model IEnumerable<ProjectWeb.Product>
+@using PagedList;
+@using PagedList.Mvc;
+@{
+    ViewBag.Title = "SearchList";
+    Layout = null;
+    var countPage = Math.Ceiling((double)ViewBag.count / (double)ViewBag.size);
+}
+<div id="load-list-data">
+    <div class="top-list-product-subpage">
+        <div class="row">
+            <div class="col-sm-8">
+                <h2 class="title-sub-category">
+                    Sản phẩm <span class="number hidden-xs">(@ViewBag.count Sản phẩm)</span>
+                </h2>
+                @*<div class="sort-by-product hidden-xs">
+                        <div class="item-dropdown dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown"> Sắp xếp <span class="caret"></span> </a>
+                            <ul class="dropdown-menu" id="other-sort" aria-labelledby="other-sort">
+                                <li>
+                                    <a href="javascript:void(0)" class="other-sort">Sắp xếp theo vị trí</a>
+                                    <input id="" type="radio" name="other_sort" value="position-down" class="hidden">
+                                </li>
+                                <li>
+                                    <a href="javascript:void(0)" class="other-sort">Sắp xếp theo tên</a>
+                                    <input id="" type="radio" name="other_sort" value="name-up" class="hidden">
+                                </li>
+                                <li>
+                                    <a href="javascript:void(0)" class="other-sort">Sắp xếp theo giá tăng dần</a>
+                                    <input id="" type="radio" name="other_sort" value="price-up" class="hidden">
+                                </li>
+                                <li>
+                                    <a href="javascript:void(0)" class="other-sort">Sắp xếp theo giá giảm dần</a>
+                                    <input id="" type="radio" name="other_sort" value="price-down" class="hidden">
+                                </li>
+                            </ul>
+                        </div>
+                    </div>*@
+            </div>
+
+            @*<div class="col-sm-4 ">
+                <div class="clearfix">
+                    <div class="view-style Foatright">
+                        <a href="javascript:void(0)" data-key-view="list_view_products" data-type="grid" class="btn-view btn-view-gird active">
+                            <i class="demo-icon icon-th-large-3"></i>
+                        </a>
+                        <a href="javascript:void(0)" data-key-view="list_view_products" data-type="list" class="btn-view btn-view-list ">
+                            <i class="demo-icon icon-th-4"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>*@
+        </div>
+    </div>
+
+
+    <div class="box-detail-list-product">
+        <div class="row">
+            @foreach (var item in Model)
+            {
+                <div class="list-item  col-md-4 col-sm-4 col-xs-6  ">
+
+                    <div class="item-product hover-action-product style-view-2 clearfix">
+                        <span class="status-product bg-red"> @(item.discount.HasValue && item.discount > 0 ?"- "+ item.discount + "%" : "HOT")</span>
+                        <div class="img bg-img-157" title="@item.product_name">
+                            <a href="/ListProduct/DetailProduct?Id=@item.product_id" title="@item.product_name">
+                                <img src="/Images/Products/@item.avatar_url" alt="" class="img-product">
+                            </a>
+                            @*<div class="action-product">
+                                    <a href="javascript://" class="item-action btn-shop-cart " item-id="199" status-store="">
+                                        Thêm vào giỏ hàng
+                                    </a>
+                                    <a href="javascript://" class="item-action preview-product-modal" product_id="157">
+                                            <i class="fa fa-search"></i>
+                                        </a>
+
+                                        <a href="javascript://" class="item-action btn-compare" product-id="157">
+                                            <i class="fa fa-retweet"></i>
+                                        </a>
+                                </div>*@
+                        </div>
+                        <div class="info">
+                            <h4 class="title-product">
+                                <a href="/ListProduct/DetailProduct?Id=@item.product_id" title="@item.product_name">
+                                    @item.product_name
+                                </a>
+                            </h4>
+                            <div class="price price-inline">
+                                @if (item.discount.HasValue && item.discount > 0)
+                                {
+
+                                    <p class="price-before ">
+                                        @item.product_price
+                                        ₫
+                                    </p>
+                                    <p class="price-well">
+                                        @(item.product_price * (100 - item.discount.Value)/100)
+                                        đ
+                                    </p>
+                                }
+                                else
+                                {
+                                    <p class="price-well">
+                                        @item.product_price
+                                        đ
+                                    </p>
+                                }
+                            </div>
+                            <div class="content-attr hidden"> </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <ul class="pagination btn-page">
+            @for (int i = 1; i <= countPage; i++)
+            {
+                <li class="@(ViewBag.page == i ? "active" : "")" onclick="LoadSearchList(@i)"><span >@i</span></li>
+            }
+        </ul>
+    </div>
+
+    <div class="clearfix"></div>
+    @*<div class="warp-loading-block hidden">
+        <div class="warp-bg"></div>
+        <div class="sk-cube-grid ajax-loading-icon">
+            <div class="sk-cube sk-cube1"></div>
+            <div class="sk-cube sk-cube2"></div>
+            <div class="sk-cube sk-cube3"></div>
+            <div class="sk-cube sk-cube4"></div>
+            <div class="sk-cube sk-cube5"></div>
+            <div class="sk-cube sk-cube6"></div>
+            <div class="sk-cube sk-cube7"></div>
+            <div class="sk-cube sk-cube8"></div>
+            <div class="sk-cube sk-cube9"></div>
+        </div>
+    </div>*@
+
+    <script type="text/javascript">
+        //document ready
+        $(document).ready(function () {
+            nh_functions.setDisplayViewOnLoad();
+        });</script>
+</div>

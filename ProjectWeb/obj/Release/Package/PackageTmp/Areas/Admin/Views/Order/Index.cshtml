@@ -1,0 +1,132 @@
+﻿@{
+    ViewBag.Title = "Quản lý đơn hàng";
+}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-6">
+            <h2>Đơn hàng</h2>
+        </div>
+        <div class="col-2  offset-2">
+            <button class="btn btn-success btn-block" type="button" onclick="Export()">Export</button>
+        </div>
+        <div class="col-2  ">
+            <button class="btn btn-success btn-block" onclick="window.location.href='/Admin/Order/AddOrder'">Thêm</button>
+        </div>
+    </div>
+    <div class="row"></div>
+    <div>
+        <div class="card shadow">
+            <div class="card-header">
+                <h6>
+                    Danh sách đơn hàng
+                </h6>
+            </div>
+            <div class="card-body">
+                <form>
+                    <div class="row pb-2">
+                        <div class="col-3">
+                            <input type="text" class="form-control" placeholder="Nhập tên hoặc số điện thoại" title="Nhập tên hoặc số điện thoại" maxlength="255" name="keysearch" value="@ViewBag.keysearch" />
+                        </div>
+                        <div class="col-3">
+                            @Html.DropDownList("status", new SelectList(ProjectWeb.Configuration.OrderConfig.StatusToDictionaryHTML, "Key", "Value", ViewBag.status), new { @class = "form-control select2-no-search" })
+                        </div>
+                        <div class="col-3">
+                            @Html.DropDownList("type", new SelectList(ProjectWeb.Configuration.ViewConfig.StatusToDictionaryPay, "Key", "Value", ViewBag.type), new { @class = "form-control select2-no-search" })
+                        </div>
+                        <div class="col-3">
+                            @Html.DropDownList("paid", new SelectList(ProjectWeb.Configuration.OrderConfig.StatusToDictionaryPaidHTML, "Key", "Value", ViewBag.paid), new { @class = "form-control select2-no-search" })
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-2 offset-10">
+                            <button class="btn btn-primary btn-block" type="submit">Tìm kiếm</button>
+                        </div>
+                    </div>
+                </form>
+                <div class="row mt-3">
+                    <div class="col-12" id="list-order">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*Modal*@
+<div class="modal fade bd-example-modal-lg" id="modal-form-lg" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" id="content-form-lg">
+
+        </div>
+    </div>
+</div>
+<div class="modal fade bd-example-modal-xl" id="modal-form-xl" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content" id="content-form-xl">
+
+        </div>
+    </div>
+</div>
+<div class="modal fade bd-example-modal-md" id="modal-form-md" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content" id="content-form-md">
+
+        </div>
+    </div>
+</div>
+<div class="modal fade bd-example-modal-sm" id="modal-form-sm" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content" id="content-form-sm">
+
+        </div>
+    </div>
+</div>
+<script>
+    loadListOrder()
+    function loadListOrder() {
+        $("#list-order").load("/Admin/Order/ListOrder?keysearch=@ViewBag.keysearch&status=@ViewBag.status&paid=@ViewBag.paid&type=@ViewBag.type&page=@ViewBag.page")
+    }
+    function Export() {
+      /*  loading(true);*/
+        window.location = "/Admin/Order/Export";
+      /*  loading(false);*/
+    }
+    function Paid(id,code) {
+        Swal.fire({
+            title: 'Thanh toán',
+            text: "bạn có chắc xác nhận thanh toán cho hoá đơn "+code+" này không?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Đồng ý!',
+            cancelButtonText: 'Hủy!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '/Admin/Order/Paid?id=' + id,
+                    success: function (rs) {
+                        if (rs) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Thanh toán thành công',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Thanh toán bại',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                        }
+
+                    }
+                });
+            }
+        })
+    }
+    $("#navOrder").addClass("active")
+</script>

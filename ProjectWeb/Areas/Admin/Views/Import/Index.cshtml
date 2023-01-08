@@ -1,0 +1,98 @@
+﻿@model ImportUnit
+@{
+    ViewBag.Title = "Quản lý phiếu nhập";
+}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-6">
+            <h2>Danh sách nhập kho</h2>
+        </div>
+        <div class="col-2  offset-4">
+            <button class="btn btn-success btn-block" onclick="window.location.href='/Admin/Import/AddImport?importunitid=@Model.id'">Thêm</button>
+        </div>
+    </div>
+
+    <div>
+        <div class="card shadow">
+            <div class="card-header">
+                <h6>
+                    Thông tin nhà cung cấp
+                </h6>
+            </div>
+            <div class="card-body">
+                @*<form>
+                        <div class="row">
+                            <div class="col-4">
+                                <input type="text" class="form-control" placeholder="Nhập tên hãng giày" title="Nhập tên hãng giày" maxlength="255" name="keysearch" value="@ViewBag.keysearch" />
+                            </div>
+                            <div class="col-2 offset-6">
+                                <button class="btn btn-primary btn-block" type="submit">Tìm kiếm</button>
+                            </div>
+                        </div>
+                    </form>*@
+                <div class="row mt-3" id="info-importunit">
+                    <div class="col-12">
+                        <div class="form-group">
+                            <label>
+                                Tên nhà cung cấp : <span>@Model.name</span>
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                Số điện thoại : <span>@Model.phone</span>
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                Địa chỉ : <span>@Model.address</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-12" id="list-import">
+
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <div class="row justify-content-center">
+                    <div class="col-2">
+                        <button class="btn btn-outline-secondary" onclick="window.location.href='/Admin/ImportUnit/Index'">Trở lại</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@*Modal*@
+<div class="modal fade bd-example-modal-lg" id="modal-form-lg" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" id="content-form-lg">
+
+        </div>
+    </div>
+</div>
+<div class="modal fade bd-example-modal-md" id="modal-form-md" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content" id="content-form-md">
+
+        </div>
+    </div>
+</div>
+<div class="modal fade bd-example-modal-sm" id="modal-form-sm" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content" id="content-form-sm">
+
+        </div>
+    </div>
+</div>
+<script>
+    loadListImport()
+    function loadListImport() {
+        $("#list-import").load("/Admin/Import/ListImport?id=@ViewBag.id&page=@ViewBag.page")
+    }
+    $("#navImport").addClass("active")
+    $("#navImportShow").addClass("show")
+    $("#iImportUnit").addClass("active")
+</script>

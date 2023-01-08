@@ -1,0 +1,89 @@
+﻿
+@{
+    Layout = null;
+}
+
+@model IEnumerable<ProjectWeb.Slide>
+@using PagedList;
+@using PagedList.Mvc;
+<style>
+    a {
+        cursor: pointer !important;
+    }
+</style>
+<table class="table table-bordered table-responsive-sm  table-hover">
+    <thead>
+        <tr>
+            <th>Tên</th>
+            <th>Ảnh</th>
+            <th>Thứ tự</th>
+            <th>Trạng thái</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Count() == 0)
+        {
+            <tr>
+                <td colspan="3" class="text-center">
+                    <div class=" text-danger">
+                        Không có dữ liệu!
+                    </div>
+                </td>
+            </tr>
+        }
+        @foreach (var item in Model)
+        {
+    <tr>
+        <td>
+            @item.slide_name
+        </td>
+        @if (!string.IsNullOrEmpty(@item.slide_urlfile))
+        {
+            <td>
+                <div style="width:115px;height:115px">
+                    <img src="~/Images/Slider/@item.slide_urlfile" id="listimg" class="img-thumbnail imgshow">
+                </div>
+            </td>
+        }
+        else
+        {
+            <td>
+            </td>
+        }
+        <td>
+            @item.ordernumber
+        </td>
+        <td>
+            <span class="badge ">@ProjectWeb.Configuration.SlideConfig.StatusToDictionaryStatusHTML[item.slide_status.Value]</span>
+        </td>
+        <td>
+            <div class="btn-group">
+                <a data-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-fw fa-wrench"></i>
+                </a>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" onclick="EditSlide(@item.slide_id)">Sửa</a>
+                    @if (item.slide_status == (int)ProjectWeb.Configuration.SlideConfig.Status.SHOW)
+                    {
+                        <a class="dropdown-item" onclick="ChangeOrder(@item.slide_id)">Đổi vị trí</a>
+                    }
+                    <a class="dropdown-item" onclick="DeleteSlide(@item.slide_id)">Xóa</a>
+                </div>
+            </div>
+        </td>
+    </tr>
+        }
+
+    </tbody>
+</table>
+<div class="col-md-12">
+    <div class="row float-right">
+        @*phân trang*@
+        @Html.PagedListPager((IPagedList)Model,
+        page => Url.Action("Index", new { page = page,status = ViewBag.Status }),
+       new PagedListRenderOptions
+        {
+        })
+    </div>
+</div>

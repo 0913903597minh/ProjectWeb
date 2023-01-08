@@ -1,0 +1,276 @@
+﻿@model ProjectWeb.Order
+@{
+    ViewBag.Title = "In hóa hơn";
+}
+<div class="container-fluid">
+    <div id="print-order">
+        <style>
+            body {
+                font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
+                text-align: center;
+                color: #777;
+            }
+
+                body h1 {
+                    font-weight: 300;
+                    margin-bottom: 0px;
+                    padding-bottom: 0px;
+                    color: #000;
+                }
+
+                body h3 {
+                    font-weight: 300;
+                    margin-top: 10px;
+                    margin-bottom: 20px;
+                    font-style: italic;
+                    color: #555;
+                }
+
+                body a {
+                    color: #06f;
+                }
+
+            .invoice-box {
+                max-width: 800px;
+                margin: auto;
+                padding: 30px;
+                border: 1px solid #eee;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+                font-size: 16px;
+                line-height: 24px;
+                font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
+                color: #555;
+            }
+
+                .invoice-box table {
+                    width: 100%;
+                    line-height: inherit;
+                    text-align: left;
+                    border-collapse: collapse;
+                }
+
+                    .invoice-box table td {
+                        padding: 5px;
+                        vertical-align: top;
+                    }
+
+                    .invoice-box table tr td:nth-child(2) {
+                        text-align: right;
+                    }
+
+                    .invoice-box table tr.top table td {
+                        padding-bottom: 20px;
+                    }
+
+                        .invoice-box table tr.top table td.title {
+                            font-size: 45px;
+                            line-height: 45px;
+                            color: #333;
+                        }
+
+                    .invoice-box table tr.information table td {
+                        padding-bottom: 40px;
+                    }
+
+                    .invoice-box table tr.heading td {
+                        background: #eee;
+                        border-bottom: 1px solid #ddd;
+                        font-weight: bold;
+                    }
+
+                    .invoice-box table tr.details td {
+                        padding-bottom: 20px;
+                    }
+
+                    .invoice-box table tr.item td {
+                        border-bottom: 1px solid #eee;
+                    }
+
+                    .invoice-box table tr.item.last td {
+                        border-bottom: none;
+                    }
+
+                    .invoice-box table tr.total td:nth-child(2) {
+                        border-top: 2px solid #eee;
+                        font-weight: bold;
+                    }
+
+            @@media only screen and (max-width: 600px) {
+                .invoice-box table tr.top table td {
+                    width: 100%;
+                    display: block;
+                    text-align: center;
+                }
+
+                .invoice-box table tr.information table td {
+                    width: 100%;
+                    display: block;
+                    text-align: center;
+                }
+            }
+        </style>
+        <script src="~/Areas/Admin/Scripts/Print/printThis.js"></script>
+        <div class="invoice-box" id="print-order">
+            <table class="mt-3 mb-5">
+                <tr class="top">
+                    <td colspan="4">
+                        <table>
+                            <tr>
+                                <td class="title" style="width:100px">
+                                    <img src="~/Areas/Admin/Scripts/Print/shoe-icon-11006.png" style="width: 100px" />
+
+                                </td>
+                                <td colspan="3" class="text-left">
+                                    <h5>THESHOESSHOP</h5>
+                                    Ngõ 1, Bùi Xương Trạch, Khương Đình, Thanh Xuân, Hà Nội<br />
+                                    ĐT: 091.390.3597<br />
+                                    Website: <span id="url"></span>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <th colspan="4" class="text-center">
+                        <h4 class="mb-0" style=" font-size: 32px; font-weight: 600;">
+                            Hóa đơn bán hàng
+                        </h4><br />
+                        <div style="font-weight:100">
+                            @{
+                                DateTime date = DateTime.Now;
+                                @("Ngày "+ @date.Day +" tháng "+ @date.Month + " năm " + @date.Year)
+                            }
+                        </div>
+                    </th>
+                </tr>
+                <tr class="information">
+
+                    <td colspan="4">
+                        <table>
+                            <tr>
+                                <td colspan="4">
+                                    <b>Tên khách: </b> @Model.buyer_name <br />
+                                    <b>Điện thoại: </b> @Model.phone <br />
+                                    <b>Địa chỉ: </b> @Model.addressto<br />
+                                    <b>Ghi chú: </b> @Model.note<br />
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <tr class="heading text-center">
+                    <td colspan="4">
+                        <h4>Chi tiết đơn hàng</h4>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="4">
+                        <b>Đơn hàng: </b> @Model.order_code <br />
+                        <b>Ngày đặt: </b> @Model.order_createdate.Value.ToString("dd/MM/yyyy hh:mm")<br />
+                        <b>Ngày tạo: </b> @DateTime.Now.ToString("dd/MM/yyyy hh:mm")<br />
+                        <b>Mã khuyễn mãi: </b>@Model.keycode<br />
+                    </td>
+                </tr>
+                <tr class="heading text-center">
+                    <td style="width:40%">Sản phẩm</td>
+                    <td style="width:20%;text-align:center">Số lượng</td>
+                    <td style="width:20%">Đơn giá</td>
+                    <td style="width:20%">Thành tiền</td>
+                </tr>
+                @foreach (var item in Model.OrderDetails.Where(x => x.is_delete == false || x.is_delete == null))
+                {
+                    <tr class="item">
+
+                        <td class="">
+                            @{
+                                <div class="form-group">
+                                    <h6 class="mb-0"> @item.Warehouse.ProductImg.Product.product_name - @item.Warehouse.ProductImg.color</h6>
+                                    <span class="text-muted font-weight-normal font-italic d-block" style="font-size:11px">VN : @item.Warehouse.Size.VN - US : @item.Warehouse.Size.US - UK : @item.Warehouse.Size.UK</span>
+                                </div>
+                            }
+                        </td>
+                        <td class="text-center">@item.amount</td>
+                        <td>@string.Format("{0:#,0}", item.product_price) VNĐ</td>
+                        <td>@string.Format("{0:#,0}", (item.amount * item.product_price)) VNĐ</td>
+
+                    </tr>
+
+                }
+                @{
+                    var to = Model.OrderDetails.Where(x => x.is_delete == false || x.is_delete == null).Sum(m => m.product_price.Value);
+                    var discount = Math.Floor(Convert.ToDouble(to / 1000 * (Model.discount.HasValue ? Model.discount : 0) / 100)) * 1000;
+                }
+                <tr class="total">
+                    <td colspan="3"><b>Tổng tiền: </b></td>
+                    <td colspan="1">@string.Format("{0:#,0}", to) VNĐ</td>
+                </tr>
+                <tr class="total">
+                    <td colspan="3"><b>Giảm giá: </b></td>
+                    <td colspan="1">- @string.Format("{0:#,0}", discount) VNĐ</td>
+                </tr>
+                <tr class="total">
+                    <td colspan="3"><b>Thanh toán: </b></td>
+                    <td colspan="1">@string.Format("{0:#,0}", @Model.total) VNĐ</td>
+                </tr>
+                <tr class="total">
+                    <td colspan="3"><b>Khách đưa: </b></td>
+                    <td colspan="1">@string.Format("{0:#,0}", Model.customer_pay.HasValue ? Model.customer_pay.Value : 0) VNĐ</td>
+                </tr>
+                <tr class="total">
+                    <td colspan="3"><b>Trả khách: </b></td>
+                    <td colspan="1">
+                        @{
+                            double re = (Model.customer_pay.HasValue ? Model.customer_pay.Value : 0) - Model.total.Value;
+                        }
+                        @string.Format("{0:#,0}", (@re > 0 ? re : 0)) VNĐ
+                    </td>
+                </tr>
+                <tr class="total">
+                    <td colspan="3"><b>Còn phải thanh toán: </b></td>
+                    @if (re > 0)
+                    {
+                        <td colspan="1">@string.Format("{0:#,0}", 0) VNĐ</td>
+                    }
+                    else
+                    {
+                        <td colspan="1">@string.Format("{0:#,0}", -1 * re) VNĐ</td>
+                    }
+
+                </tr>
+                <tr class="text-center">
+                    <td>
+                        Khách hàng
+                        <div class="mt-5">@Model.buyer_name</div>
+                    </td>
+                    <td>Nhân viên</td>
+                    <td colspan="2">Vận chuyển</td>
+                </tr>
+            </table>
+
+        </div>
+
+    </div>
+    <div class="row mt-3">
+        <div class="col-4">
+        </div>
+        <div class="col-2">
+            <button type="button" class="btn btn-block btn-outline-secondary" onclick="Back() ">Hủy</button>
+        </div>
+        <div class="col-2">
+            <button type="button" class="btn btn-block btn-primary" onclick="PrintOrder()">In hóa đơn</button>
+        </div>
+        <div class="col-4">
+        </div>
+    </div>
+</div>
+<script>
+    function PrintOrder() {
+        $("#print-order").printThis()
+
+    }
+    function Back() {
+        window.history.back();
+    }
+    $("#url").html(window.location.hostname)
+    $("#navOrder").addClass("active")
+</script>

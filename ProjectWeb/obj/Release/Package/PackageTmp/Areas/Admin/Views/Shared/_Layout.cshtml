@@ -1,0 +1,178 @@
+﻿@{
+    var user = Session["User"] as ProjectWeb.User;
+}
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="utf-8">
+
+    <title>The Shoes Shop</title>
+
+
+    <link href="~/Areas/Admin/Scripts/sweetalert/sweetalert2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/Areas/Admin/Contents/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-2/css/all.min.css">
+    <link href="~/Areas/Admin/Contents/PagedList.css" rel="stylesheet" />
+    <link href="~/Areas/Admin/Scripts/select2.min.css" rel="stylesheet" />
+
+    <link href="~/Areas/Admin/Contents/sb-admin-2.min.css" rel="stylesheet" />
+
+    <!-- Toast-->
+    @*<link href="~/Areas/Admin/Contents/Toast/vanillatoasts.css" rel="stylesheet" />*@
+
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" charset="utf-8"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+    <script src="~/Areas/Admin/Scripts/sweetalert/sweetalert2.all.min.js"></script>
+    <script src="~/Areas/Admin/Scripts/select2.min.js"></script>
+
+    <style>
+        .select2-container {
+            width: 100% !important;
+        }
+    </style>
+</head>
+<body>
+    <!--wrapper start-->
+    <div class="wrapper">
+        <!--header menu start-->
+        <div class="header">
+            <div class="header-menu">
+                <div class="title">The <span>Shoes</span></div>
+                @*<div class="sidebar-btn">
+                        <i class="fas fa-bars"></i>
+                    </div>*@
+                <ul>
+                    @*<li><a href="#"><i class="fas fa-search"></i></a></li>*@
+                    <li><a href="#"><i class="fas fa-bell"></i></a></li>
+                    <li><a><i data-toggle="modal" data-target="#logoutModal" class="fas fa-power-off"></i></a></li>
+
+                </ul>
+            </div>
+        </div>
+
+        <!-- Logout Modal-->
+        <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Đăng xuất</h5>
+                        <button class="close" type="button " data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">Bạn muốn đăng xuất tài khoản? </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" type="button" data-dismiss="modal">Hủy</button>
+                        <a class="btn btn-primary btn-danger" href="/admin/login/LogOut">Đồng ý</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--header menu end-->
+        <!--sidebar start-->
+        <div class="sidebar">
+            <div class="sidebar-menu">
+                <center class="profile">
+                    <img src="~/Areas/Admin/Contents/Images/avt.jpg" alt="">
+                    <p>Đào Nhật Minh</p>
+                </center>
+
+                <li class="item">
+                    <a href="~/Admin/Dashboard/Index" class="menu-btn">
+                        <i class="fas fa-desktop"></i><span>Thống kê</span>
+                    </a>
+                </li>
+
+                <li class="item" id="profile">
+                    <a href="#profile" class="menu-btn">
+                        <i class="fas fa-user-circle"></i><span>Sản phẩm <i class="fas fa-chevron-down drop-down"></i></span>
+                    </a>
+                    <div class="sub-menu">
+                        <a href="~/Admin/Product/Index"><i class="fas fa-image"></i><span>Sản phẩm </span></a>
+                        <a href="~/Admin/Brand/Index"><i class="fas fa-address-card"></i><span>Thương hiệu </span></a>
+                    </div>
+                </li>
+
+                <li class="item" id="messages">
+                    <a href="#messages" class="menu-btn">
+                        <i class="fas fa-envelope"></i><span>Nhập kho <i class="fas fa-chevron-down drop-down"></i></span>
+                    </a>
+                    <div class="sub-menu">
+                        <a href="~/Admin/ImportUnit/Index"><i class="fas fa-envelope"></i><span>Nhà cung cấp </span></a>
+                        <a href="~/Admin/Import/AddImport"><i class="fas fa-envelope-square"></i><span>Nhập hàng </span></a>
+                    </div>
+                </li>
+
+                <li class="item">
+                    <a href="~/Admin/Promotion/Index" class="menu-btn">
+                        <i class="fas fa-desktop"></i><span>Khuyến mãi </span>
+                    </a>
+                </li>
+
+                <li class="item">
+                    <a href="~/Admin/Order/Index" class="menu-btn">
+                        <i class="fas fa-desktop"></i><span>Đơn hàng </span>
+                    </a>
+                </li>
+
+                <li class="item">
+                    <a href="~/Admin/Slide/Index" class="menu-btn">
+                        <i class="fas fa-desktop"></i><span>Slide </span>
+                    </a>
+                </li>
+
+                <li class="item" id="settings">
+                    <a href="#settings" class="menu-btn">
+                        <i class="fas fa-cog"></i><span>Settings <i class="fas fa-chevron-down drop-down"></i></span>
+                    </a>
+                    <div class="sub-menu">
+                        <a onclick="ChangePass()"><i class="fas fa-lock"></i><span>Password</span></a>
+                        @*<a href="#"><i class="fas fa-language"></i><span>Language</span></a>*@
+                    </div>
+                </li>
+
+                @*<li class="item">
+                        <a href="#" class="menu-btn">
+                            <i class="fas fa-info-circle"></i><span>About</span>
+                        </a>
+                    </li>*@
+            </div>
+        </div>
+        <!--sidebar end-->
+        <!--main container start-->
+        <div class="main-container">
+
+            @RenderBody();
+        </div>
+        <!--main container end-->
+
+        <!--change passs-->
+        <div class="modal fade bd-example-modal-md" id="modal-form-change" aria-hidden="true">
+            <div class="modal-dialog modal-md">
+                <div class="modal-content" id="content-form-change">
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--wrapper end-->
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $(".sidebar-btn").click(function () {
+                $(".wrapper").toggleClass("collapse");
+            });
+        });
+
+        function ChangePass() {
+            $("#content-form-change").load("/Admin/Login/ChangePass", function (response) {
+                $("#modal-form-change").modal('show');
+            });
+        }
+    </script>
+
+</body>
+</html>

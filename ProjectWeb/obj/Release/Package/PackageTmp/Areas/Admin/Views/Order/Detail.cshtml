@@ -1,0 +1,360 @@
+﻿
+@{
+    ViewBag.Title = "Chi tiết đơn hàng";
+    ProjectWeb.Service.WarehouseService warehouseService = new ProjectWeb.Service.WarehouseService();
+}
+@model Order
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-6">
+            <h2>Chi tiết đơn hàng</h2>
+        </div>
+        <div class="col-2 @(Model.order_status == (int)ProjectWeb.Configuration.OrderConfig.Status.CANCEL?"offset-4":"")">
+            <button type="button" class="btn btn-block btn-outline-secondary " onclick="window.location.href = '/Admin/Order/Index'">Trở lại</button>
+        </div>
+        @if (Model.order_status != (int)ProjectWeb.Configuration.OrderConfig.Status.CANCEL)
+        {
+            <div class="col-2 ">
+                <button type="button" class="btn btn-block btn-success btn-hide" onclick="SubmitUpdate()">Cập nhật</button>
+            </div>
+            <div class="col-2 ">
+                <button type="button" class="btn btn-block btn-primary btn-hide" onclick="window.location.href = '/Admin/Extend/PrintOrder?orderid=@Model.order_id'">In hóa đơn</button>
+            </div>
+        }
+    </div>
+
+    <form id="form-updateorder">
+        <div class="row">
+            <div class="col-12" id="success">
+                @Html.ValidationMessage("success", new { @id = "msgsuccess", @style = "font-size:20px" })
+            </div>
+            <div class="col-12" id="error">
+                @Html.ValidationMessage("error", new { @id = "msgerror", @style = "font-size:20px" })
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-6" id="information">
+                <div class="card shadow">
+                    <div class="card-header">
+                        <h6>
+                            Thông tin khách
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div>
+                            <input type="hidden" name="order_id" value="@Model.order_id" />
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <div class="form-group pb-3">
+                                    <label>Số điện thoại nhận hàng<span class="text-danger">*</span></label>
+                                    <input type="text" placeholder="Số điện thoại nhận hàng" id="Phone" value="@Model.phone" aria-describedby="button-addon3" maxlength="11" class="Phone form-control " readonly>
+                                </div>
+
+                                <div class="form-group pb-3">
+                                    <label>Họ tên người nhận<span class="text-danger">*</span></label>
+                                    <input type="text" placeholder="Họ tên" aria-describedby="button-addon3" value="@Model.buyer_name" maxlength="255" class="form-control " readonly>
+                                    @*<div class="input-group-append border-0">
+                                            <button id="button-addon3" type="button" class="btn btn-dark px-4 rounded-pill"><i class="fa fa-gift mr-2"></i>Apply coupon</button>
+                                        </div>*@
+                                </div>
+
+                                @*<div class="form-group pb-3">
+
+                                    <label>Thành phố<span class="text-danger">*</span></label>
+                                    <select aria-describedby="button-addon3" disabled class="form-control" readonly>
+                                        <option value="-1">Tỉnh / Thành phố</option>
+                                        @foreach (var item in ViewBag.Province as List<ProjectWeb.Province>)
+                                        {
+                                            <option value="@item.Id" @(item.Id == @Model.ProvinceId ? "selected" : "")>@item.Name</option>
+                                        }
+                                    </select>
+                                </div>*@
+                                <div class="form-group pb-3">
+                                    <label>Địa chỉ nhận hàng<span class="text-danger">*</span></label>
+                                    <input type="text" placeholder="Địa chỉ nhận hàng" value="@Model.addressto" aria-describedby="button-addon3" maxlength="510" class="form-control " readonly>
+                                </div>
+                                <div class="form-group pb-3">
+                                    <label>Trạng thái<span class="text-danger">*</span></label>
+                                    @if (Model.order_status == (int)ProjectWeb.Configuration.OrderConfig.Status.WAIT)
+                                    {
+                                        @Html.DropDownList("order_status", new SelectList(ProjectWeb.Configuration.OrderConfig.StatusToDictionaryWAIT, "Key", "Value", Model.order_status), new { @class = "form-control select2-no-search", @id = "Status" })
+                                    }
+                                    else if (Model.order_status == (int)ProjectWeb.Configuration.OrderConfig.Status.CANCEL)
+                                    {
+                                        <select class="form-control" readonly>
+                                            <option value="(int)ProjectWeb.Configuration.OrderConfig.Status.CANCEL">Hủy</option>
+                                        </select>
+                                    }
+                                    else if (Model.order_status == (int)ProjectWeb.Configuration.OrderConfig.Status.CONFIRM)
+                                    {
+                                        @Html.DropDownList("order_status", new SelectList(ProjectWeb.Configuration.OrderConfig.StatusToDictionaryCONFIRM, "Key", "Value", Model.order_status), new { @class = "form-control select2-no-search", @id = "Status" })
+                                    }
+                                    else if (Model.order_status == (int)ProjectWeb.Configuration.OrderConfig.Status.FINISH)
+                                    {
+                                        @Html.DropDownList("order_status", new SelectList(ProjectWeb.Configuration.OrderConfig.StatusToDictionaryFINISH, "Key", "Value", Model.order_status), new { @class = "form-control select2-no-search", @id = "Status" })
+                                    }
+                                </div>
+                                <div class="form-group pb-3" id="KeyCode">
+                                    <label>Mã khuyến mãi</label>
+                                    <input type="text" name="KeyCode" value="@Model.keycode" onchange="Update()" class="form-control" placeholder="Mã khuyễn mãi" aria-describedby="basic-addon2" readonly>
+                                    @Html.ValidationMessage("keycode", new { @class = "text-danger" })
+                                </div>
+                                <div class="form-group pb-3">
+                                    <label>Hình thức thanh toán<span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" disabled name="name" value="@ProjectWeb.Configuration.ViewConfig.StatusToDictionaryPay[Model.type.Value]" readonly />
+                                </div>
+                                <div class="form-group pb-3">
+                                    <label>Lời nhắn từ khách<span class="text-danger">*</span></label>
+                                    <textarea class="form-control" id="Refuse" rows="5" readonly>@Model.note</textarea>
+                                </div>
+                                <div class="form-group pb-3">
+                                    <label>Lời nhắn từ cửa hàng<span class="text-danger">*</span></label>
+                                    <textarea class="form-control" name="Refuse" id="Refuse" rows="5">@Model.refuse</textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-3 d-flex justify-content-center">
+
+                        </div>
+                        @*<p class="font-italic mb-4">Ghi chú cho người bán</p>
+                            <textarea name="Note" rows="5" maxlength="2048" class="form-control" value="@Model.Note" style="max-width:100%"></textarea>*@
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-6" id="list_orderdetail">
+                <div class="card shadow">
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col-6">
+                                <h6>Giỏ hàng</h6>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mt-3">
+                            <div class="col-12" id="">
+                                <table class="table table-bordered table-responsive-sm  table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th style="width:50%">Sản phẩm</th>
+                                            <th style="width:20%">Số lượng</th>
+                                            <th style="width:20%">Đơn giá</th>
+                                            <th style="width:10%"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="list-product">
+                                        @if (Model.OrderDetails.Count > 0)
+                                        {
+                                            int i = 0;
+                                            foreach (var item in Model.OrderDetails)
+                                            {
+                                                <tr class="row-orderdetail">
+                                                    <td>
+                                                        @if (Model.order_status == (int)ProjectWeb.Configuration.OrderConfig.Status.WAIT)
+                                                        {
+                                                            <input type="hidden" name="OrderDetails[@i].WarehouseId" value="@item.warehouse_id" />
+                                                        }
+                                                        @{
+                                                            ProjectWeb.Warehouse warehouse = warehouseService.GetById(item.warehouse_id.Value);
+                                                            <div class="form-group">
+                                                                <h6 class="mb-0"> @warehouse.ProductImg.Product.product_name - @warehouse.ProductImg.color</h6>
+                                                                <span class="text-muted font-weight-normal font-italic d-block" style="font-size:11px">VN : @warehouse.Size.VN - US : @warehouse.Size.US - UK : @warehouse.Size.UK</span>
+                                                            </div>
+                                                        }
+                                                    </td>
+                                                    <td>
+                                                        @item.amount
+                                                        <input type="hidden" class="form-control" name="OrderDetails[@i].Amount" max="amount" min="1" value="@item.amount" />
+                                                    </td>
+                                                    @*<td>
+                                                        @if (Model.Status == (int)ProjectWeb.Configuration.OrderConfig.Status.WAIT)
+                                                        {
+                                                            @item.Amount
+                                                            int amount = item.Warehouse.Amount.Value - new ProjectWeb.Provider.CartProvider().GetAmount(item.WarehouseId.Value) - new ProjectWeb.Provider.OrderDetailProvider().GetAmountWait(item.WarehouseId.Value) + item.Amount.Value;
+                                                     
+                                                        }
+                                                        else
+                                                        {
+                                                            @item.Amount
+                                                        }
+                                                    </td>*@
+                                                <td>
+                                                    @string.Format("{0:#,0}", item.product_price) VNĐ
+                                                    <input type="hidden" class="form-control" name="OrderDetails[@i].Price"  value="@item.product_price" />
+                                                </td>
+                                                    <td>
+                                                        @*@if (Model.Status == (int)ProjectWeb.Configuration.OrderConfig.Status.WAIT)
+                                                        {
+                                                            <a onclick="Remove(@item.Id);"> <i class="fa fa-times"></i></a>
+                                                        }*@
+                                                    </td>
+                                                    @{i++;}
+                                                </tr>
+                                            }
+                                        }
+                                        @{
+                                            var to = Model.OrderDetails.Where(x => x.is_delete == false || x.is_delete == null).Sum(m => m.product_price.Value*m.amount.Value);
+                                            var discount = Math.Floor(Convert.ToDouble(to / 1000 * (Model.discount.HasValue ? Model.discount : 0) / 100)) * 1000;
+                                        }
+                                        <tr>
+                                            <td colspan="1">
+                                                <b>Tổng tiền : </b>
+                                            </td>
+                                            <td colspan="3" class="Total">
+                                                <h5 id="total-show" style="">
+                                                    <b>
+                                                        @string.Format("{0:#,0}", to) VNĐ
+                                                    </b>
+                                                </h5>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="1">
+                                                <b>Giảm giá : </b>
+                                            </td>
+                                            <td colspan="3" class="Total">
+                                                <h5 id="total-show" style="">
+                                                    <b>
+                                                        -  @string.Format("{0:#,0}", discount) VNĐ
+                                                    </b>
+                                                </h5>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="1">
+                                                <b>Thanh toán : </b>
+                                            </td>
+                                            <td colspan="3" class="Total">
+                                                <h5 id="total-show" style="">
+                                                    <b>
+                                                        @string.Format("{0:#,0}", Model.total) VNĐ
+                                                    </b>
+                                                </h5>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="1">
+                                                <b>Tiền khách đưa : </b>
+                                            </td>
+                                            <td colspan="3" class="CustomerPay">
+                                                <h5 id="total-show" style="">
+                                                    <b>
+                                                        @string.Format("{0:#,0}", Model.customer_pay.HasValue ? Model.customer_pay.Value : 0) VNĐ
+                                                    </b>
+                                                </h5>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="1">
+                                                <b>Tiền trả lại : </b>
+                                            </td>
+                                            <td colspan="3" class="Total" id="total-show">
+                                                @{
+                                                    double refund = ((Model.customer_pay.HasValue ? Model.customer_pay.Value : 0) - Model.total.Value);
+                                                    if (refund > 0)
+                                                    {
+                                                        <h5 id="total-show" style="">
+                                                            <b>
+                                                                @string.Format("{0:#,0}", refund) VNĐ
+                                                            </b>
+                                                        </h5>
+                                                    }
+                                                    else
+                                                    {
+                                                        <h5 id="total-show" style="">
+                                                            <b>
+                                                                Chưa thanh toán
+                                                            </b>
+                                                        </h5>
+                                                    }
+                                                }
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            if (Model.Status == 3) {
+                $(".btn-hide").addClass("d-none")
+            }
+        </script>
+    </form>
+</div>
+<div class="modal fade bd-example-modal-xl" id="modal-form-xl" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content" id="content-form-xl">
+
+        </div>
+    </div>
+</div>
+<div class="modal fade bd-example-modal-md" id="modal-form-md" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content" id="content-form-md">
+
+        </div>
+    </div>
+</div>
+<div class="modal fade bd-example-modal-sm" id="modal-form-sm" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content" id="content-form-sm">
+
+        </div>
+    </div>
+</div>
+<div class="modal fade bd-example-modal-lg" id="modal-form-lg" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" id="content-form-lg">
+
+        </div>
+    </div>
+</div>
+
+<script>
+
+    async function SubmitUpdate() {
+       /* loading(true)*/
+        var $form = $("#form-updateorder");
+        $.ajax({
+            type: "POST",
+            url: "/Admin/Order/Detail",
+            data: $form.serialize(),
+            success: function (data, status, xhr) {
+                /*loading(false)*/
+                var statusCode = xhr.getResponseHeader("statusCode");
+                if (statusCode == '401') {
+                    window.location.replace("/admin/login");
+                }
+                if (xhr.status == 201) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Cập nhật đơn hàng thành công',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }
+                $("#form-updateorder").html($(data).find("#form-updateorder").html());
+
+            },
+        });
+    }
+    function RemoveProductInOrder(item) {
+
+    }
+</script>
+<script>
+    if ($("#msgsuccess").html() != "") {
+        $("#success").addClass("alert alert-success")
+    }
+    if ($("#msgerror").html() != "") {
+        $("#error").addClass("alert alert-danger")
+    }
+    $("#navOrder").addClass("active")
+</script>
+

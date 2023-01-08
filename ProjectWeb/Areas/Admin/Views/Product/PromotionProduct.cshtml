@@ -1,0 +1,101 @@
+﻿@{
+   Layout = null;
+   List<int> productid = ViewBag.productid as List<int>;
+   List<int> brandid = ViewBag.brandid as List<int>;
+}
+
+<form id="form-promotionproduct">
+    <div class="modal-header">
+        <h6 class="modal-title">Khuyễn mãi sản phẩm</h6>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="row alert alert-danger mb-2 mt-2">
+            <div class="col-12">
+                <p>Nếu không chọn sản phẩm hoặc thương hiệu khuyến mãi sẽ áp dụng lên tất cả sản phẩm.</p>
+            </div>
+        </div>
+        <div class="form-group ">
+            <label>Sản phẩm<span class="text-danger">*</span></label>
+            <select class="form-control chosen-select" id="product-select" name="product_id" multiple>
+                @foreach (var item in ViewBag.product as List<ProjectWeb.Product>)
+                {
+                    <option value="@item.product_id" @(productid.Contains(item.product_id) ? "selected" : "")>@item.product_name</option>
+                }
+            </select>
+            @Html.ValidationMessage("product", new { @class = "text-danger" })
+        </div>
+        <div class="form-group">
+            <label>Thương hiệu<span class="text-danger">*</span></label>
+            <select class="form-control chosen-select"  id="brand-select" name="brand_id" multiple>
+                @foreach (var item in ViewBag.brand as List<ProjectWeb.Brand>)
+                {
+                    <option value="@item.brand_id" @(brandid.Contains(item.brand_id) ? "selected" : "")>@item.brand_name</option>
+                }
+            </select>
+            @Html.ValidationMessage("brand_id", new { @class = "text-danger" })
+        </div>
+        <div class="form-group">
+            <label>Khuyến mãi<span class="text-danger">*</span></label>
+            <input type="number" class="form-control" max="99" min="0" name="discount" value="@ViewBag.discount" />
+            @Html.ValidationMessage("discount", new { @class = "text-danger" })
+        </div>
+        @Html.ValidationMessage("error", new { @class = "text-danger" })
+        <div class="modal-footer">
+            <button type="button" onclick="submitPromotionProduct()" class="btn btn-primary">Lưu</button>
+            <button type="button" data-dismiss="modal" class="btn btn-light">Đóng</button>
+        </div>
+    </div><!-- modal-body -->
+    <script>
+        $("#product-select").select2()
+        $("#brand-select").select2()
+
+        function submitPromotionProduct() {
+            var $form = $("#form-promotionproduct");
+            Swal.fire({
+                title: 'Tạo khuyễn mãi',
+                text: "Tạo khuyễn mãi cho sản phẩm?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Đồng ý!',
+                cancelButtonText: 'Hủy!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    /* loading(true)*/
+                    $.ajax({
+                        type: "POST",
+                        url: "/Admin/Product/PromotionProduct",
+                        data: $form.serialize(),
+                        success: function (data, status, xhr) {
+                            /*  loading(false)*/
+                            var statusCode = xhr.getResponseHeader("statusCode");
+                            if (statusCode == '401') {
+                                window.location.replace("Admin/login");
+                            }
+                            if (xhr.status == 201) {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Tạo khuyễn mãi thành công',
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                })
+                                try {
+                                    loadListProduct()
+                                } catch (e) {
+
+                                }
+                                $("#modal-form-md").modal("hide");
+                            } else {
+                                $("#form-promotionproduct").html($(data).filter("#form-promotionproduct").html());
+                            }
+                        }
+                    });
+                }
+            })
+        }
+    </script>
+</form>

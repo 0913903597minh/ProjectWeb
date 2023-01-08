@@ -1,0 +1,67 @@
+﻿@using System.Web
+@using ProjectWeb.Configuration
+@model List<Product>
+@{
+    Layout = null;
+    var path = Server.MapPath("~/Images/Product");
+    var type = ViewBag.Type as string;
+}
+@if (Model.Count > 0)
+{
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="box-left row box-product">
+            <div class="title-theme6 title-producr-detail col-md-12 col-sm-12 col-xs-12">
+                <h3>Sản phẩm cùng loại</h3>
+            </div>
+            <div class="list-product-related owl-carousel owl-theme" style="opacity: 1; display: block;">
+                <div class="owl-wrapper-outer">
+                    <div class="owl-wrapper" style="width: 3600px; left: 0px; display: block; transition: all 0ms ease 0s; transform: translate3d(0px, 0px, 0px);">
+                        @foreach (var item in Model)
+                        {
+                            <div class="owl-item" style="width: 300px;">
+                                <div class="list-item  col-xs-12 ">
+                                    <div class="item-product hover-action-product style-view-2 clearfix">
+                                        <span class="status-product bg-red"> @(item.discount.HasValue && item.discount > 0 ? "- " + item.discount + "%" : "HOT")</span>
+                                        <div class="img bg-img-157" title="@item.product_name">
+                                            <a href="/ListProduct/DetailProduct?Id=@item.product_id" title="@item.product_name">
+                                                <img src="/Images/Products/@item.avatar_url" alt="" class="img-product">
+                                            </a>
+                                        </div>
+                                        <div class="info">
+                                            <h4 class="title-product">
+                                                <a href="">
+                                                    @item.product_name
+                                                </a>
+                                            </h4>
+                                            <div class="price price-inline">
+                                                @if (item.discount.HasValue && item.discount > 0)
+                                                {
+
+                                                    <p class="price-before ">
+                                                        @item.product_price
+                                                        ₫
+                                                    </p>
+                                                    <p class="price-well">
+                                                        @(item.product_price * (100 - item.discount.Value) / 100)
+                                                        đ
+                                                    </p>
+                                                }
+                                                else
+                                                {
+                                                    <p class="price-well">
+                                                        @item.product_price
+                                                        đ
+                                                    </p>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}

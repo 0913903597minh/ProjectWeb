@@ -1,0 +1,57 @@
+﻿@model ProjectWeb.Models.ChangePass
+@{
+    Layout = null;
+}
+<form id="form-changepass">
+    <div class="modal-header">
+        <h6 class="modal-title">Đổi mất khẩu</h6>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="form-group">
+            <label>Mật khẩu cũ<span class="text-danger">*</span></label>
+            <input type="password" name="oldPass" class="pass form-control" id="oldPass" value="@Model.oldPass" placeholder="Nhập mật khẩu cũ" />
+            @Html.ValidationMessageFor(model=>model.oldPass,"", new { @class = "text-danger" })
+        </div>
+        <div class="form-group">
+            <label>Mật khẩu mới<span class="text-danger">*</span></label>
+            <input type="password" name="newpass" class="newpass form-control" id="newpass" value=""   placeholder="Nhập mật khẩu mới"/>
+            @Html.ValidationMessageFor(model => model.newPass,"", new { @class = "text-danger" })
+        </div>
+        <div class="form-group">
+            <label>Nhập lại mật khẩu mới<span class="text-danger">*</span></label>
+            <input type="password" name="renewpass" class="renewpass form-control" id="renewpass" placeholder="Nhập mật lại mật khẩu" value="" />
+            @Html.ValidationMessageFor(model => model.renewPass, "", new { @class = "text-danger" })
+        </div>
+        @Html.ValidationMessage("error", new { @class = "text-danger" })
+        <div class="modal-footer">
+            <button type="button" onclick="sumbitChangePass()" class="btn btn-primary">Lưu</button>
+            <button type="button" data-dismiss="modal" class="btn btn-light">Đóng</button>
+        </div>
+    </div><!-- modal-body -->
+    <script>
+
+        function sumbitChangePass() {
+            var $form = $("#form-changepass");
+        $.ajax({
+            type: "POST",
+            url: "/Admin/Login/ChangePass",
+            data: $form.serialize(),
+            success: async function (data, status, xhr) {
+                     if (xhr.status == 201) {
+                    $("#modal-form-change").modal("hide");
+                    Swal.fire({
+                        icon: 'success',
+                        title: "Đổi mật khẩu thành công",
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }
+                await $("#form-changepass").html($(data).filter("#form-changepass").html());
+            },
+        });
+    }
+    </script>
+</form>

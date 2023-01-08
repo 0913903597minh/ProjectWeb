@@ -1,0 +1,78 @@
+﻿@{
+    Layout = null;
+}
+@model IEnumerable<Import>
+@using PagedList;
+@using PagedList.Mvc;
+<style>
+    a {
+        cursor: pointer !important;
+    }
+</style>
+<table class="table table-bordered table-responsive-sm  table-hover">
+    <thead>
+        <tr>
+            <th>Ngày nhập</th>
+            <th>Tổng số lượng</th>
+            <th>Tổng tiền</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Count() == 0)
+        {
+            <tr>
+                <td colspan="4" class="text-center">
+                    <div class=" text-danger">
+                        Không có dữ liệu!
+                    </div>
+                </td>
+            </tr>
+        }
+        @foreach (var item in Model)
+        {
+
+
+    <tr>
+        @if (item.create_date.HasValue)
+        {
+            <td>
+                @item.create_date.Value.ToString("dd-MM-yyyy HH:mm")
+            </td>
+        }
+        else
+        {
+            <td>
+            </td>
+        }
+        <td>
+            @item.ImportDetails.Sum(x => x.amount.Value)
+        </td>
+        <td>
+            @(string.Format("{0:#,0}", item.price)+ " VNĐ")
+        </td>
+        <td>
+            <div class="btn-group">
+                <a data-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-fw fa-wrench"></i>
+                </a>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" onclick="window.location.href='/Admin/Import/AddImport?id=@item.id'">Chi tiết</a>
+                </div>
+            </div>
+        </td>
+    </tr>
+        }
+
+    </tbody>
+</table>
+<div class="col-md-12">
+    <div class="row float-right">
+        @*phân trang*@
+        @Html.PagedListPager((IPagedList)Model,
+        page => Url.Action("ListImport", new { page = page,  id = ViewBag.id }),
+        new PagedListRenderOptions
+        {
+        })
+    </div>
+</div>

@@ -1,0 +1,285 @@
+﻿@model ProjectWeb.Order
+@{
+    int i = 0;
+    ProjectWeb.Service.WarehouseService warehouseService = new ProjectWeb.Service.WarehouseService();
+    ViewBag.Title = "Đơn hàng";
+}
+<style>
+    input, select, textarea {
+        max-width: 100%
+    }
+</style>
+<button id="btn_order" class="d-none">show</button>
+<div class="shopping-cart">
+    <div class="px-4 px-lg-0">
+        <div class="pb-5">
+            <div class="container">
+                <h3 class="mt-5 head-page" align="center">Đặt hàng</h3>
+                <form class=" py-5 p-4 bg-white rounded shadow-sm" id="form-order" @*action="/Cart/Order" method="post"*@>
+
+                    @if (Model.OrderDetails.Count > 0)
+                    {
+                        <div class="col-12" id="success">
+                            @Html.ValidationMessage("success", new { @id = "msgsuccess", @style = "font-size:20px" })
+                        </div>
+                        <div class="col-12" id="error">
+                            @Html.ValidationMessage("error", new { @id = "msgerror", @style = "font-size:20px" })
+                        </div>
+
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <div class="bg-light rounded-pill px-4 py-3 text-uppercase font-weight-bold">Thông tin khách hàng</div>
+                                <div class="mt-3">
+                                    <div class="form-group pb-3">
+
+                                        <label>Số điện thoại nhận hàng<span class="text-danger">*</span></label>
+                                        <input type="text" placeholder="Số điện thoại nhận hàng" id="Phone" value="@Model.phone" name="phone" aria-describedby="button-addon3" maxlength="10" class="Phone form-control ">
+                                        @Html.ValidationMessage("phone", new { @class = "text-danger" })
+                                    </div>
+
+                                    <div class="form-group pb-3">
+                                        <label>Họ tên người nhận<span class="text-danger">*</span></label>
+                                        <input type="text" placeholder="Họ tên" aria-describedby="button-addon3" value="@Model.buyer_name" name="buyer_name" maxlength="255" class="form-control ">
+                                        @Html.ValidationMessage("buyer_name", new { @class = "text-danger" })
+                                        @*<div class="input-group-append border-0">
+                                                <button id="button-addon3" type="button" class="btn btn-dark px-4 rounded-pill"><i class="fa fa-gift mr-2"></i>Apply coupon</button>
+                                            </div>*@
+                                    </div>
+
+                                    <div class="form-group pb-3">
+                                        <label>Địa chỉ nhận hàng<span class="text-danger">*</span></label>
+                                        <input type="text" placeholder="Địa chỉ nhận hàng" value="@Model.addressto" name="addressto" aria-describedby="button-addon3" maxlength="510" class="form-control ">
+                                        @Html.ValidationMessage("addressto", new { @class = "text-danger" })
+                                    </div>
+                                    <div class="form-group pb-3" id="KeyCode">
+                                        <label>Mã khuyến mãi</label>
+                                        <div class="input-group">
+                                            <input type="text" name="keycode" value="@Model.keycode" class="form-control" placeholder="Mã khuyễn mãi" aria-describedby="basic-addon2">
+                                            <div class="input-group-append">
+                                                <button class="btn btn-outline-secondary" type="button" onclick="Apply()">Apply</button>
+                                            </div>
+                                        </div>
+                                        @Html.ValidationMessage("keycode", new { @class = "text-danger" })
+                                    </div>
+
+                                    @*<div class="input-group mb-4 border rounded-pill p-2">
+                                            <input type="text" placeholder="Mã giảm giá" aria-describedby="button-addon3" class="form-control border-0">
+                                            <div class="input-group-append border-0">
+                                                <button id="button-addon3" type="button" class="btn btn-dark px-4 rounded-pill"><i class="fa fa-gift mr-2"></i>Xác nhận</button>
+                                            </div>
+                                        </div>*@
+                                    <p class="font-italic mb-4">Ghi chú cho người bán</p>
+                                    <textarea name="note" rows="5" maxlength="2048" class="form-control" value="@Model.note" style="max-width:100%"></textarea>
+
+                                </div>
+
+                            </div>
+                            <div class="col-lg-8">
+                                <div class="bg-light rounded-pill px-4 py-3 text-uppercase font-weight-bold">Chi tiết đơn hàng </div>
+                                <div class="mt-3">
+                                    <div class="table-responsive">
+                                        <table class="table" id="table-product">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col" class="border-0 bg-light">
+                                                        <div class="p-2 px-3 text-uppercase">Sản phẩm</div>
+                                                    </th>
+                                                    <th scope="col" class="border-0 bg-light">
+                                                        <div class="py-2 text-uppercase">Đơn giá</div>
+                                                    </th>
+                                                    <th scope="col" class="border-0 bg-light">
+                                                        <div class="py-2 text-uppercase">Số lượng</div>
+                                                    </th>
+                                                    <th scope="col" class="border-0 bg-light">
+                                                        <div class="py-2 text-uppercase">Tổng tiền</div>
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @if (Model.OrderDetails != null)
+                                                {
+                                                    foreach (var item in Model.OrderDetails)
+                                                    {
+
+                                                        <tr>
+                                                            <th scope="row" class="border-0">
+                                                                @{
+                                                                          ProjectWeb.Warehouse warehouse = warehouseService.GetById(item.warehouse_id.Value);
+                                                                    <div class="p-2">
+                                                                        @*<img src="/Images/Products/@warehouse.ProductImg.Product.AvatarUrl" alt="" width="70" class="img-fluid rounded shadow-sm">*@
+                                                                        <div class="ml-3 d-inline-block align-middle">
+                                                                            <h5 class="mb-0"> <span class="text-dark d-inline-block align-middle">@warehouse.ProductImg.Product.product_name - @warehouse.ProductImg.color</span></h5>
+                                                                            <span class="text-muted font-weight-normal font-italic d-block">VN : @warehouse.Size.VN - US : @warehouse.Size.US - UK : @warehouse.Size.UK</span>
+                                                                        </div>
+                                                                    </div>
+                                                                }
+
+                                                            </th>
+
+                                                            <td class="border-0 align-middle">
+                                                                <strong> @string.Format("{0:#,0}", item.product_price) VNĐ</strong>
+                                                            </td>
+
+                                                            <td class="border-0 align-middle">
+                                                                <strong>@item.amount</strong>
+                                                            </td>
+                                                            <td class="border-0 align-middle">
+                                                                @{
+                                                                    double totalProduct = item.amount.Value * item.product_price.Value;
+                                                                    <strong> @string.Format("{0:#,0}", @totalProduct) VNĐ</strong>
+                                                                }
+
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                }
+                                                <tr>
+                                                    <td colspan="3"><strong class="text-muted">Tổng tiền </strong></td>
+                                                    <td colspan="2">
+                                                        <strong>
+                                                            @{
+                                                                double to = 0;
+                                                                if (Model.OrderDetails.Count(x => x.is_delete == false || x.is_delete == null) > 0)
+                                                                {
+                                                                    to = Model.OrderDetails.Where(x => x.is_delete == false || x.is_delete == null).Sum(m => m.product_price.Value * m.amount.Value);
+                                                                }
+                                                                var discount = Math.Floor(Convert.ToDouble(to / 1000 * Model.discount / 100)) * 1000;
+                                                            }
+                                                            @string.Format("{0:#,0}", to) VNĐ
+                                                        </strong>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="3"><strong class="text-muted">Giảm giá </strong></td>
+                                                    <td colspan="2">
+                                                        <strong>
+                                                            -  @string.Format("{0:#,0}", discount) VNĐ
+                                                        </strong>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="3"><strong class="text-muted">Thanh toán</strong></td>
+
+                                                    <td colspan="2">
+                                                        <strong>
+                                                            @string.Format("{0:#,0}", (to - discount)) VNĐ
+                                                        </strong>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    @*<p class="font-italic mb-4">Shipping and additional costs are calculated based on values you have entered.</p>
+                                        <ul class="list-unstyled mb-4">
+                                            <li class="d-flex justify-content-between py-3 border-bottom"></li>
+                                            <li class="d-flex justify-content-between py-3 border-bottom"><strong class="text-muted">Phí giao hàng</strong><strong>0</strong></li>
+                                            <li class="d-flex justify-content-between py-3 border-bottom"><strong class="text-muted">Tax</strong><strong>$0.00</strong></li>
+                                            <li class="d-flex justify-content-between py-3 border-bottom">
+                                                <strong class="text-muted">Tổng</strong>
+                                                <h5 class="font-weight-bold">$400.00</h5>
+                                            </li>
+                                        </ul><a href="#" class="btn btn-dark rounded-pill py-2 btn-block">Đặt hàng</a>*@
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12 pb-3">
+                                <label>Hình thức thanh toán</label>
+                                <div class="form-check">
+                                    <input type="radio" class="form-check-input" @(Model.type == ProjectWeb.Configuration.ViewConfig.POSTPAID_INT ? "checked" : "") id="postpaid" name="type" value="@ProjectWeb.Configuration.ViewConfig.POSTPAID_INT">
+                                    <label class="form-check-label" for="@ProjectWeb.Configuration.ViewConfig.POSTPAID_INT">Thanh toán khi nhận hàng</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="radio" class="form-check-input" @(Model.type == ProjectWeb.Configuration.ViewConfig.PREPAY_INT ? "checked" : "") id="prepay" name="type" value="@ProjectWeb.Configuration.ViewConfig.PREPAY_INT">
+                                    <label class="form-check-label" for="@ProjectWeb.Configuration.ViewConfig.PREPAY_INT">Thanh toán chuyển khoản</label>
+                                </div>
+                                @Html.ValidationMessage("type", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="row alert alert-success">
+                            <div class="col-lg-12 p-3 " style="font-size:20px">
+                                <p style="">
+                                    <b>Lưu ý : </b> <br />
+                                    - Nếu bạn chọn hình thức thanh toán chuyển khoản.Vui lòng nhập mã đơn hàng (Mã đơn hàng bạn có thể xem ở phần kiểm tra đơn) và số điện thoại.<br />
+                                    - Bạn sẽ nhận được sản phẩm sau khi thanh toán.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="row d-flex justify-content-center mt-3" style="min-height:72px">
+                            <div class="col-md-4 col-6 ">
+                                <button type="button" class="btn btn-success btn-block px-4 rounded-pill" onclick="SubmitCart();">Đặt hàng</button>
+                            </div>
+                            @*<div class="col-md-4 col-6 ">
+                                    <button type="button" class="btn btn-success btn-block px-4 rounded-pill">Thanh toán trực tuyến</button>
+                                </div>*@
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="row d-flex justify-content-center mt-3" style="min-height:72px">
+                            <div class="col-md-3 col-6 ">
+                                <button type="button" class="btn btn-outline-success px-4 rounded-pill btn-block" onclick="window.location.href = '/ListProduct/Index'"><i class="fa fa-chevron-left"></i> Quay lại đặt hàng</button>
+                            </div>
+                        </div>
+                    }
+                    <script>
+                        function Apply() {
+                            var $form = $("#form-order");
+                            $.ajax({
+                                type: "POST",
+                                url: "/Cart/ApplyPromotion",
+                                data: $form.serialize(),
+                                success: async function (data, status, xhr) {
+                                    //console.log(data)
+                                    //await $("#KeyCode").html($(data).find("#KeyCode").html());
+                                    //await $("#table-product").html($(data).find("#table-product").html());
+                                    $("#form-order").html($(data).find("#form-order").html());
+                                }
+                            });
+                        }
+                        if (typeof $("#msgsuccess").html() != "undefined" && $("#msgsuccess").html() != "") {
+                            $("#success").addClass("alert alert-success")
+                        }
+                        if (typeof $("#msgerror").html() != "undefined" && $("#msgerror").html() != "") {
+                            $("#error").addClass("alert alert-danger")
+                        }
+                    </script>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    //input number
+    $(document).ready(function () {
+        $("#form-order #Phone").keypress(function (e) {
+            if (e.which != 8 && e.which != 0 && (e.which < 48 || e.which > 57)) {
+                return false;
+            }
+        });
+    });
+    function SubmitCart() {
+        console.log(1)
+        var $form = $("#form-order");
+        $.ajax({
+            type: "POST",
+            url: "/Cart/Order",
+            data: $form.serialize(),
+            success: function (data, status, xhr) {
+                console.log(2)
+                console.log(xhr.status)
+                var statusCode = xhr.getResponseHeader("statusCode");
+                if (statusCode == '401') {
+                    window.location.replace("/login");
+                }
+                if (xhr.status == 201) {
+                    $("#btn_order").click();
+                    window.location.href = '/Cart/OrderList?phone=' + $("#form-order #Phone").val()
+                }
+                $("#form-order").html($(data).find("#form-order").html());
+            },
+        });
+    }
+</script>

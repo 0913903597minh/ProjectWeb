@@ -1,0 +1,70 @@
+﻿@{
+    Layout = null;
+}
+@model IEnumerable<ImportUnit>
+@using PagedList;
+@using PagedList.Mvc;
+<style>
+    a {
+        cursor: pointer !important;
+    }
+</style>
+<table class="table table-bordered table-responsive-sm  table-hover">
+    <thead>
+        <tr>
+            <th>Tên nhà cung cấp</th>
+            <th>Số điện thoại</th>
+            <th>Địa chỉ</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Count() == 0)
+        {
+            <tr>
+                <td colspan="4" class="text-center">
+                    <div class=" text-danger">
+                        Không có dữ liệu!
+                    </div>
+                </td>
+            </tr>
+        }
+        @foreach (var item in Model)
+        {
+    <tr>
+        <td>
+            @item.name
+        </td>
+        <td>
+            @item.phone
+        </td>
+        <td>
+            @item.address
+        </td>
+        <td>
+            <div class="btn-group">
+                <a data-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-fw fa-wrench"></i>
+                </a>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" onclick="window.location.href='/Admin/Import/Index?id=@item.id'">Lịch sử nhập hàng</a>
+                    <a class="dropdown-item" onclick="window.location.href='/Admin/Import/AddImport?importunitid=@item.id'">Nhập hàng</a>
+                    <a class="dropdown-item" onclick="EditImportUnit(@item.id)">Sửa</a>
+                </div>
+            </div>
+        </td>
+    </tr>
+        }
+
+    </tbody>
+</table>
+<div class="col-md-12">
+    <div class="row float-right">
+        @*phân trang*@
+        @Html.PagedListPager((IPagedList)Model,
+        page => Url.Action("Index", new { page = page }),
+        new PagedListRenderOptions
+        {
+        })
+    </div>
+</div>

@@ -1,0 +1,532 @@
+﻿@model ProjectWeb.Product
+
+<div id="main" class="nh-row">
+    </br>   
+
+    <div id="content-row-38" class="nh-row   ">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-12 col-xs-12">
+                    <div class="product-detail">
+                        <div class="top-detail-product">
+                            <div class="row">
+                                <div class="col-md-5 col-sm-6 col-xs-12">
+                                    <div class="box-slide-images-detail">
+                                        <div class="view-images-large">
+                                            <div id="main_img" class="light-gallery">
+                                                <a class="elevatezoom-gallery" data-image="~/Images/Products/@Model.avatar_url" href="~/Images/Products/@Model.avatar_url" data-zoom-image="~/Images/Products/@Model.avatar_url">
+                                                    <img id="img-main-detail" class="img-main-detail" src="~/Images/Products/@Model.avatar_url">
+                                                </a>
+                                                @foreach (var item in Model.ProductImgs)
+                                                {
+                                                    <a href="~/Images/Products/@item.url" class="hidden">
+                                                        <img src="~/Images/Products/@item.url">
+                                                    </a>
+                                                }
+
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    @*<script type="text/javascript">
+                                        $(document).ready(function () {
+                                            if ("1" == "1") {
+                                                function actionZoomImage() {
+                                                    if ($('.elevatezoom-gallery').length > 0) {
+                                                        main_image.elevateZoom({
+                                                            zoomType: "inner",
+                                                            cursor: "crosshair"
+                                                        });
+                                                    }
+                                                }
+                                            }
+
+                                            var main_image = $('.img-main-detail');
+                                            var elevatezoom_gallery = $('.elevatezoom-gallery');
+                                            if ("1" == "1") {
+                                                actionZoomImage();
+                                            }
+                                            // event click select thumb item
+                                            $(document).on('click', '.slider-thumb .item', function (e) {
+                                                main_image.attr('src', $(this).attr('data-original'));
+                                                elevatezoom_gallery.attr('data-zoom-image', $(this).attr('data-original'));
+                                                elevatezoom_gallery.attr('data-image', $(this).attr('data-original'));
+                                                if ("1" == "1") {
+                                                    actionZoomImage();
+                                                }
+                                            });
+
+                                            //event mouseover and mouseout thumb item
+                                            $(document).on('mouseover', '.slider-thumb .item', function (e) {
+                                                main_image.attr('src', $(this).attr('data-original'));
+                                                elevatezoom_gallery.attr('data-zoom-image', $(this).attr('data-original'));
+                                                elevatezoom_gallery.attr('data-image', $(this).attr('data-original'));
+
+                                            }).on('mouseout', '.slider-thumb .item', function (e) {
+                                                main_image.attr('src', $('.slider-thumb .item.active').attr('data-original'));
+                                            });
+
+                                        });</script>*@
+                                </div>
+
+                                <div class="col-md-7 col-sm-6 col-xs-12">
+                                    <h1 class="title-name-product"> @Model.product_name </h1>
+                                    <ul class="a-row row-bb">
+                                        @*<li> <label> Mã sản phẩm: </label> <span class="selection">NH_00357</span></li>*@
+                                        <li> <label> Thương hiệu: </label> <span class="selection"><a href="/search/products/basic-search-product?keyword=Li-ning"> @Model.Brand.brand_name </a></span></li>
+                                    </ul>
+                                    @if (Model.discount.HasValue && Model.discount > 0)
+                                    {
+                                        <div class="price-detail-page">
+                                            <span class="lb-price price-main">
+                                                @(Model.product_price *(100-Model.discount.Value)/100)
+                                            </span> <span class="dvt"> ₫ </span> <span class="tag-discount " style="margin-left: 20px;">
+                                                Giảm giá
+                                                @Model.discount %
+                                            </span>
+                                            <div class="clearfix"></div>
+                                            <span class="lb-price-sale price-before ">
+                                                <span class="lb-price-sale price-before ">
+                                                    @Model.product_price
+                                                    ₫
+                                                </span>
+                                            </span>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="price-detail-page">
+                                            <span class="lb-price price-main">
+                                                @Model.product_price
+                                                đ
+                                            </span>
+                                        </div>
+                                    }
+
+                                    <div class="description-product-detail col-xs-12">
+                                        <p>Giày @Model.product_name phối màu được làm từ chất liệu siêu nhẹ, bền đẹp,</p>
+                                        <ul>
+                                            <li>Được làm từ da tổng hợp cao cấp... và vải ...</li>
+                                            <li>Thiết kế cổ..., kiểu dáng...</li>
+                                            <li>Siêu nhẹ, siêu bền</li>
+                                            <li>Xuất xứ: </li>
+                                        </ul>
+                                    </div>
+                                    <div class="product-available col-xs-12">
+                                        <div class="group-available col-xs-12 noPadding">
+                                            <div class="a-row">
+                                                <label> Chất liệu đế: </label> <span class="selection">  </span>
+                                            </div>
+                                        </div>
+
+                                        <div class="group-available col-xs-12 noPadding">
+                                            <div class="a-row">
+                                                <label> Màu sắc: </label>
+                                            </div>
+                                            <ul class="col-md-12 no-padding">
+                                                @*@foreach (var item in Model.ProductImgs)
+                                                    {
+                                                        <li class="item-available  " meta-group="MAU_SAC" meta-code="bac-den" meta-name="@item.color" data-original="~/Images/Products/@item.url">
+                                                            <div class="img">
+                                                                <img src="~/Images/Products/@item.url" title="@item.color">
+                                                            </div>
+                                                        </li>
+                                                    }*@
+                                                @{
+                                                    int allamount = 0;
+                                                    if (Model.ProductImgs != null)
+                                                    {
+                                                        foreach (var img in Model.ProductImgs.Where(x => (x.is_delete != true) && (x.status == 1)))
+                                                        {
+                                                            if (img.Warehouses != null)
+                                                            {
+                                                                allamount += img.Warehouses.Sum(x => x.amount.Value);
+                                                            }
+                                                        }
+                                                    }
+                                                    if (allamount > 0)
+                                                    {
+                                                        foreach (var item in Model.ProductImgs.Where(x => (x.is_delete != true) && x.Warehouses.Count(m => (m.is_delete != true)) > 0 && x.Warehouses.Sum(m => m.amount) > 0))
+                                                        {
+                                                            <li class="item-available  " meta-group="@item.productimg_id" meta-code="@item.color" meta-name="@item.color" data-original="~/Images/Products/@item.url">
+                                                                <div class="img">
+                                                                    @*<a style="width:150px;height:150px">*@
+                                                                    <img src="/Images/Products/@item.url" onclick="SelectWarehoue(@item.productimg_id)" class=" img-active img-thumbnail" alt="@item.color" title="@item.color" />
+                                                                    @*</a>*@
+                                                                </div>
+
+                                                            </li>
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="col-12">
+                                                            <span class="btn btn-danger disabled">Hết hàng</span>
+                                                        </div>
+
+                                                    }
+                                                }
+                                            </ul>
+                                        </div>
+                                        @*<div class="group-available col-xs-12 noPadding">
+                                                <div class="a-row">
+                                                    <label> Xuất xứ: </label> <span class="selection"> Trung Quốc </span>
+                                                </div>
+                                            </div>*@
+
+                                        <div class="mb-3">
+                                            Kích cỡ :
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <select class="form-control block WarehouseId" disabled name="WarehouseId" id="WarehouseId">
+                                                    <option>Vui lòng chọn màu sắc của giày</option>
+
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xs-12 btn-muahang">
+                                        <div class="input-group">
+                                            @*<span class="input-group-btn">
+                                                    <button type="button" class="btn btn-default">-</button>
+                                                </span>*@
+                                            <input id="WarehouseAmount" name="number_available" class="form-control num-quantity input-lg" type="text" value="1" min="1" placeholder="Số lượng" style="text-align: center; min-width: 55px;">
+                                            @*<span class="input-group-btn">
+                                                    <button type="button" class="btn btn-default">+</button>
+                                                </span>*@
+                                        </div>
+                                        <a class="btn btn-default btn-cart btn-pay btn-add-cart-two btn-disabled" disabled onclick="AddCart()" item-id="199">
+                                            <i class="icon fa-solid fa-cart-plus" aria-hidden="true"></i> Thêm vào giỏ hàng
+                                        </a>
+
+                                        <button id="" onclick="BuyProduct()" disabled class="btn btn-default btn-cart btn-pay btn-add-cart-two btn-disabled">
+                                            Mua ngay
+                                        </button>
+
+                                        @*<a class="btn btn-default btn-compare" product-id="157"> <i class="icon icon-arrows-ccw"></i> </a>*@
+                                    </div>
+                                </div>
+                                <div class="clearfix"></div>
+                            </div>
+                            @*<script type="text/javascript">
+                                    $(document).ready(function () {
+                                        $('.light-gallery').lightGallery({
+                                            pager: true
+                                        });
+                                    });
+
+                                    $('.num-quantity').bootstrapNumber();
+
+                                    // slider thumb
+                                    $(".slider-thumb").owlCarousel({
+                                        itemsCustom: [
+                                            [0, 2],
+                                            [480, 3],
+                                            [500, 3],
+                                            [992, 3],
+                                            [1024, 5],
+                                        ],
+                                        navigation: true,
+                                        pagination: false,
+                                        autoPlay: false,
+                                    });
+
+                                    var boxes = [];
+                                    var arr_social = { "facebook_share": 1, "google_share": 1, "twitter_share": 1, "linkedin_share": 1, "tumblr_share": 1 };
+                                    if (typeof arr_social != 'undefined') {
+                                        if (arr_social['facebook_share'] == 1) {
+                                            boxes.push('facebook');
+                                        }
+                                        if (arr_social['google_share'] == 1) {
+                                            boxes.push('googleplus');
+                                        }
+                                        if (arr_social['twitter_share'] == 1) {
+                                            boxes.push('twitter');
+                                        }
+                                        if (arr_social['linkedin_share'] == 1) {
+                                            boxes.push('linkedin');
+                                        }
+                                        if (arr_social['tumblr_share'] == 1) {
+                                            boxes.push('pinterest');
+                                        }
+                                    }
+                                    // soical share
+                                    $("#share-icon").jsSocials({
+                                        showLabel: false,
+                                        showCount: false,
+                                        //                shares: ["facebook", "googleplus", "twitter", "linkedin", "pinterest"]
+                                        shares: boxes,
+                                    });
+                                </script>*@
+                        </div>
+
+
+
+                        <script type="text/javascript">
+                            //document ready
+                            $(document).ready(function () {
+                                nh_product_detail.init();
+                            });
+                        </script>
+
+                        <div class="row">
+                            <div class="col-md-12 col-sm-12 col-xs-12 bottom-detail-product">
+                                <ul class="nav_title clearfix">
+                                    <li class="active"> <a data-toggle="tab" href="#content">Mô tả</a></li>
+                                    <li> <a data-toggle="tab" href="#highlight"> Hướng dẫn chọn kích cỡ </a></li>
+                                </ul>
+                                <div class="tab-content">
+                                    <div id="content" class="tab-pane fade in active">
+                                        @Html.Raw(Model.product_describe)
+                                    </div>
+                                    <div id="highlight" class="tab-pane fade">
+                                        <div class="col-12" style="max-height: 550px; overflow: auto; ">
+                                            <img src="~/Images/Size/6b750f75e5f602a85be7-1.jpg" style="width:100%" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row" id="product-relate">
+                                <div class="col-12" id="product-relate"></div>
+                            </div>
+
+                            @*<script type="text/javascript">
+                                    $(".img-active").click(function () {
+                                        $(".img-active").removeClass("active")
+                                        $(this).addClass("active")
+                                        $("#WarehouseId").removeAttr("disabled")
+                                    })
+
+                                    function SelectWarehoue(id) {
+                                        $("#WarehouseId").load("/ListProduct/SelectSize?id=" + id)
+                                        $(".btn-disabled").removeAttr("disabled")
+                                    }
+
+                                    $("#product-relate").load("/ListProduct/ListAllProductSimilar?id=@Model.product_id&brandid=@Model.brand_id&type=@Model.type")
+                                    var owl = $(".list-product-related");
+                                    owl.owlCarousel({
+                                        loop: true,
+                                        lazyLoad: true,
+                                        navigation: false,
+                                        pagination: false,
+                                        itemsCustom: [
+                                            [0, 1],
+                                            [480, 1],
+                                            [600, 2],
+                                            [768, 3],
+                                            [800, 3],
+                                            [1024, 4],
+                                            [1500, 4],
+                                        ],
+                                    });
+
+                                    function BuyProduct() {
+                                        var warehouse = $("#WarehouseId").val();
+                                        if (Number.isInteger(parseInt(warehouse))) {
+                                            $.ajax({
+                                                url: "/ListProduct/OrderProduct?id=" + warehouse,
+                                                success: function (rs) {
+                                                    loading(false)
+                                                    if (rs) {
+                                                        window.location.href = '/Cart/Index'
+                                                    }
+                                                }
+                                            });
+                                        } else {
+
+                                            alert("Lỗi")
+                                        }
+                                    }
+
+                                    async function AddCart() {
+                                        var warehouse_id = $("#WarehouseId").val();
+                                        var warehouse_amount = $("#").val()
+                                        if (Number.isInteger(parseInt(warehouse))) {
+                                            $.ajax({
+                                                url: "/ListProduct/OrderProduct?id=" + warehouse_id +"&amount=" +,
+                                                success: function (data, status, xhr) {
+
+                                                    if (xhr.status == 201) {
+                                                        alert("Thêm vào giỏ thành công")
+                                                    } else {
+                                                        alert("Lỗi")
+                                                    }
+                                                },
+                                            });
+                                        }
+                                        else {
+                                            alert("Lỗi")
+                                        }
+
+                                    }
+                                </script>*@
+                        </div>
+                        <div class="col-md-12 no-padding"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        if ("1" == "1") {
+            function actionZoomImage() {
+                if ($('.elevatezoom-gallery').length > 0) {
+                    main_image.elevateZoom({
+                        zoomType: "inner",
+                        cursor: "crosshair"
+                    });
+                }
+            }
+        }
+
+        var main_image = $('.img-main-detail');
+        var elevatezoom_gallery = $('.elevatezoom-gallery');
+        if ("1" == "1") {
+            actionZoomImage();
+        }
+        // event click select thumb item
+        $(document).on('click', '.slider-thumb .item', function (e) {
+            main_image.attr('src', $(this).attr('data-original'));
+            elevatezoom_gallery.attr('data-zoom-image', $(this).attr('data-original'));
+            elevatezoom_gallery.attr('data-image', $(this).attr('data-original'));
+            if ("1" == "1") {
+                actionZoomImage();
+            }
+        });
+
+        //event mouseover and mouseout thumb item
+        $(document).on('mouseover', '.slider-thumb .item', function (e) {
+            main_image.attr('src', $(this).attr('data-original'));
+            elevatezoom_gallery.attr('data-zoom-image', $(this).attr('data-original'));
+            elevatezoom_gallery.attr('data-image', $(this).attr('data-original'));
+
+        }).on('mouseout', '.slider-thumb .item', function (e) {
+            main_image.attr('src', $('.slider-thumb .item.active').attr('data-original'));
+        });
+
+    });
+
+    $(document).ready(function () {
+        $('.light-gallery').lightGallery({
+            pager: true
+        });
+    });
+
+    $('.num-quantity').bootstrapNumber();
+
+    // slider thumb
+    $(".slider-thumb").owlCarousel({
+        itemsCustom: [
+            [0, 2],
+            [480, 3],
+            [500, 3],
+            [992, 3],
+            [1024, 5],
+        ],
+        navigation: true,
+        pagination: false,
+        autoPlay: false,
+    });
+
+    var boxes = [];
+    var arr_social = { "facebook_share": 1, "google_share": 1, "twitter_share": 1, "linkedin_share": 1, "tumblr_share": 1 };
+    if (typeof arr_social != 'undefined') {
+        if (arr_social['facebook_share'] == 1) {
+            boxes.push('facebook');
+        }
+        if (arr_social['google_share'] == 1) {
+            boxes.push('googleplus');
+        }
+        if (arr_social['twitter_share'] == 1) {
+            boxes.push('twitter');
+        }
+        if (arr_social['linkedin_share'] == 1) {
+            boxes.push('linkedin');
+        }
+        if (arr_social['tumblr_share'] == 1) {
+            boxes.push('pinterest');
+        }
+    }
+    // soical share
+    $("#share-icon").jsSocials({
+        showLabel: false,
+        showCount: false,
+        //                shares: ["facebook", "googleplus", "twitter", "linkedin", "pinterest"]
+        shares: boxes,
+    });
+
+                                $(".img-active").click(function () {
+                                    $(".img-active").removeClass("active")
+                                    $(this).addClass("active")
+                                    $("#WarehouseId").removeAttr("disabled")
+                                })
+
+                                function SelectWarehoue(id) {
+                                    $("#WarehouseId").load("/ListProduct/SelectSize?id=" + id)
+                                    $(".btn-disabled").removeAttr("disabled")
+                                    $("#WarehouseId").removeAttr("disabled")
+                                }
+
+                                $("#product-relate").load("/ListProduct/ListAllProductSimilar?id=@Model.product_id&brandid=@Model.brand_id&type=@Model.type")
+                                var owl = $(".list-product-related");
+                                owl.owlCarousel({
+                                    loop: true,
+                                    lazyLoad: true,
+                                    navigation: false,
+                                    pagination: false,
+                                    itemsCustom: [
+                                        [0, 1],
+                                        [480, 1],
+                                        [600, 2],
+                                        [768, 3],
+                                        [800, 3],
+                                        [1024, 4],
+                                        [1500, 4],
+                                    ],
+                                });
+
+    function BuyProduct() {
+        var warehouseid = $("#WarehouseId").val();
+        var warehouseamount = $("#WarehouseAmount").val();
+        if (Number.isInteger(parseInt(warehouseid))) {
+            $.ajax({
+                url: "/ListProduct/OrderProduct?id=" + warehouseid + "&amount=" + warehouseamount,
+                success: function (rs) {
+                    if (rs) {
+                        window.location.href = '/Cart/Index'
+                    }
+                }
+            });
+        } else {
+            alert("Lỗi")
+        }
+    }
+
+    async function AddCart() {
+        var warehouseid = $("#WarehouseId").val();
+        var warehouseamount = $("#WarehouseAmount").val();
+        if (Number.isInteger(parseInt(warehouseid))) {
+            $.ajax({
+                url: "/ListProduct/OrderProduct?id=" + warehouseid + "&amount=" + warehouseamount,
+                success: function (data, status, xhr) {
+                    if (xhr.status == 201) {
+                        alert("Thêm vào giỏ thành công")
+                    } else {
+                        alert("Lỗi")
+                    }
+                },
+            });
+        }
+        else {
+            alert("Lỗi")
+        }
+
+    }
+
+</script>

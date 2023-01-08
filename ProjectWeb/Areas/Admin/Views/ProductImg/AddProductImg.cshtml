@@ -1,0 +1,108 @@
+﻿@model ProductImg
+@{
+    Layout = null;
+}
+
+<form id="form-addproductimg" @*enctype="multipart/form-data" novalidate="novalidate" method="post" action="/ProductImg/AddProductImg"*@>
+    <div class="modal-header">
+        <h6 class="modal-title">Thông tin màu giày</h6>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div>
+            <input type="hidden" name="productimg_id" value="@Model.productimg_id" id="Id" />
+            <input type="hidden" name="product_id" value="@Model.product_id" id="ProductId" />
+        </div>
+        <div class="form-group">
+            <label>Màu sắc</label>
+            <input type="text" class="form-control" name="color" id="color" value="@Model.color" />
+        </div>
+        <div class="form-group">
+            <label>Ảnh mẫu</label>
+            <input type="file" name="Url" id="Url" class="Url" value="@Model.url" />
+            @if (!string.IsNullOrEmpty(Model.url))
+            {
+                <div style="width:150px;height:150px">
+                    <img src="~/Images/Products/@Model.url" id="imgshow" class="img-thumbnail">
+                </div>
+            }
+            else
+            {
+                <div style="width:150px;height:150px">
+                    <img src="" style="display:none" id="imgshow" class="img-thumbnail">
+                </div>
+            }
+            @Html.ValidationMessageFor(model => model.url, "", new { @class = "text-danger" })
+        </div>
+
+
+        @Html.ValidationMessage("error", new { @class = "text-danger" })
+        <div class="modal-footer">
+            <button type="button" onclick="submitproductImg()" class="btn btn-primary">Lưu</button>
+            <button type="button" data-dismiss="modal" class="btn btn-light">Đóng</button>
+        </div>
+    </div><!-- modal-body -->
+    <script>
+        if ($("#imgshow").height() < $("#imgshow").width()) {
+            $('#imgshow').css('width', '100%');
+            $('#imgshow').css('height', 'auto');
+        } else {
+            $('#imgshow').css('height', '100%');
+            $('#imgshow').css('width', 'auto');
+        }
+        $("#Url").change(function () {
+        $('#imgshow').css('display', 'block');
+        if (this.files && this.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                $('#imgshow').attr('src', e.target.result);
+                if ($("#imgshow").height() < $("#imgshow").width()) {
+                    $('#imgshow').css('width', '100%');
+                    $('#imgshow').css('height', 'auto');
+                } else {
+                    $('#imgshow').css('height', '100%');
+                    $('#imgshow').css('width', 'auto');
+                }
+            }
+            reader.readAsDataURL(this.files[0]);
+        }
+    });
+        function submitproductImg() {
+        var notify = ""
+        if (@Model.productimg_id== 0) {
+            notify = "Thêm màu thành công"
+
+        } else {
+            notify = "Sửa màu thành công"
+            }
+            var img = new FormData($("#form-addproductimg")[0]);
+        $.ajax({
+            type: "POST",
+            url: "/Admin/ProductImg/AddProductImg",
+            data: img,
+            contentType: false,
+            processData: false,
+            success: async function (data, status, xhr) {
+                var statusCode = xhr.getResponseHeader("statusCode");
+                if (statusCode == '401') {
+                    window.location.replace("/Admin/login");
+                }
+                if (xhr.status == 201) {
+                    loadListProductImg()
+
+                    $("#modal-form-md").modal("hide");
+                    Swal.fire({
+                        icon: 'success',
+                        title: notify,
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }
+                await $("#form-addproductimg").html($(data).filter("#form-addproductimg").html());
+            },
+        });
+    }
+    </script>
+</form>

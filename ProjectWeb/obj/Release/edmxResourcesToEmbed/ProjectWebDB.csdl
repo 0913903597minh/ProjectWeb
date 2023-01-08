@@ -1,0 +1,416 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="ProjectWebModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityContainer Name="ProjectWebEntities" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="Brands" EntityType="ProjectWebModel.Brand" />
+    <EntitySet Name="Carts" EntityType="ProjectWebModel.Cart" />
+    <EntitySet Name="ImportDetails" EntityType="ProjectWebModel.ImportDetail" />
+    <EntitySet Name="Imports" EntityType="ProjectWebModel.Import" />
+    <EntitySet Name="ImportUnits" EntityType="ProjectWebModel.ImportUnit" />
+    <EntitySet Name="OrderDetails" EntityType="ProjectWebModel.OrderDetail" />
+    <EntitySet Name="Orders" EntityType="ProjectWebModel.Order" />
+    <EntitySet Name="ProductImgs" EntityType="ProjectWebModel.ProductImg" />
+    <EntitySet Name="Products" EntityType="ProjectWebModel.Product" />
+    <EntitySet Name="Promotions" EntityType="ProjectWebModel.Promotion" />
+    <EntitySet Name="Sizes" EntityType="ProjectWebModel.Size" />
+    <EntitySet Name="Slides" EntityType="ProjectWebModel.Slide" />
+    <EntitySet Name="sysdiagrams" EntityType="ProjectWebModel.sysdiagram" />
+    <EntitySet Name="Users" EntityType="ProjectWebModel.User" />
+    <EntitySet Name="Warehouses" EntityType="ProjectWebModel.Warehouse" />
+    <AssociationSet Name="FK_Product_Brand" Association="ProjectWebModel.FK_Product_Brand">
+      <End Role="Brand" EntitySet="Brands" />
+      <End Role="Product" EntitySet="Products" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Cart_User" Association="ProjectWebModel.FK_Cart_User">
+      <End Role="User" EntitySet="Users" />
+      <End Role="Cart" EntitySet="Carts" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Cart_Warehouse" Association="ProjectWebModel.FK_Cart_Warehouse">
+      <End Role="Warehouse" EntitySet="Warehouses" />
+      <End Role="Cart" EntitySet="Carts" />
+    </AssociationSet>
+    <AssociationSet Name="FK_ImportDetail_Import" Association="ProjectWebModel.FK_ImportDetail_Import">
+      <End Role="Import" EntitySet="Imports" />
+      <End Role="ImportDetail" EntitySet="ImportDetails" />
+    </AssociationSet>
+    <AssociationSet Name="FK_ImportDetail_Warehouse" Association="ProjectWebModel.FK_ImportDetail_Warehouse">
+      <End Role="Warehouse" EntitySet="Warehouses" />
+      <End Role="ImportDetail" EntitySet="ImportDetails" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Import_ImportUnit" Association="ProjectWebModel.FK_Import_ImportUnit">
+      <End Role="ImportUnit" EntitySet="ImportUnits" />
+      <End Role="Import" EntitySet="Imports" />
+    </AssociationSet>
+    <AssociationSet Name="FK_OrderDetail_Order" Association="ProjectWebModel.FK_OrderDetail_Order">
+      <End Role="Order" EntitySet="Orders" />
+      <End Role="OrderDetail" EntitySet="OrderDetails" />
+    </AssociationSet>
+    <AssociationSet Name="FK_OrderDetail_Warehouse" Association="ProjectWebModel.FK_OrderDetail_Warehouse">
+      <End Role="Warehouse" EntitySet="Warehouses" />
+      <End Role="OrderDetail" EntitySet="OrderDetails" />
+    </AssociationSet>
+    <AssociationSet Name="FK_ProductImg_Product" Association="ProjectWebModel.FK_ProductImg_Product">
+      <End Role="Product" EntitySet="Products" />
+      <End Role="ProductImg" EntitySet="ProductImgs" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Warehouse_ProductImg" Association="ProjectWebModel.FK_Warehouse_ProductImg">
+      <End Role="ProductImg" EntitySet="ProductImgs" />
+      <End Role="Warehouse" EntitySet="Warehouses" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Warehouse_Size" Association="ProjectWebModel.FK_Warehouse_Size">
+      <End Role="Size" EntitySet="Sizes" />
+      <End Role="Warehouse" EntitySet="Warehouses" />
+    </AssociationSet>
+  </EntityContainer>
+  <EntityType Name="Brand">
+    <Key>
+      <PropertyRef Name="brand_id" />
+    </Key>
+    <Property Name="brand_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="brand_name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="is_delete" Type="Boolean" />
+    <Property Name="create_date" Type="DateTime" Precision="3" />
+    <NavigationProperty Name="Products" Relationship="ProjectWebModel.FK_Product_Brand" FromRole="Brand" ToRole="Product" />
+  </EntityType>
+  <EntityType Name="Cart">
+    <Key>
+      <PropertyRef Name="cart_id" />
+    </Key>
+    <Property Name="cart_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="warehouse_id" Type="Int32" />
+    <Property Name="user_id" Type="Int32" />
+    <Property Name="amount" Type="Double" />
+    <Property Name="status" Type="Int32" />
+    <Property Name="create_date" Type="DateTime" Precision="3" />
+    <Property Name="update_date" Type="DateTime" Precision="3" />
+    <NavigationProperty Name="User" Relationship="ProjectWebModel.FK_Cart_User" FromRole="Cart" ToRole="User" />
+    <NavigationProperty Name="Warehouse" Relationship="ProjectWebModel.FK_Cart_Warehouse" FromRole="Cart" ToRole="Warehouse" />
+  </EntityType>
+  <EntityType Name="ImportDetail">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="amount" Type="Int32" />
+    <Property Name="price" Type="Double" />
+    <Property Name="create_date" Type="DateTime" Precision="3" />
+    <Property Name="status" Type="Int32" />
+    <Property Name="import_id" Type="Int32" />
+    <Property Name="warehouse_id" Type="Int32" />
+    <NavigationProperty Name="Import" Relationship="ProjectWebModel.FK_ImportDetail_Import" FromRole="ImportDetail" ToRole="Import" />
+    <NavigationProperty Name="Warehouse" Relationship="ProjectWebModel.FK_ImportDetail_Warehouse" FromRole="ImportDetail" ToRole="Warehouse" />
+  </EntityType>
+  <EntityType Name="Import">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="price" Type="Double" />
+    <Property Name="create_date" Type="DateTime" Precision="3" />
+    <Property Name="status" Type="Int32" />
+    <Property Name="importunit_id" Type="Int32" />
+    <NavigationProperty Name="ImportDetails" Relationship="ProjectWebModel.FK_ImportDetail_Import" FromRole="Import" ToRole="ImportDetail" />
+    <NavigationProperty Name="ImportUnit" Relationship="ProjectWebModel.FK_Import_ImportUnit" FromRole="Import" ToRole="ImportUnit" />
+  </EntityType>
+  <EntityType Name="ImportUnit">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="address" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="create_date" Type="DateTime" Precision="3" />
+    <Property Name="is_delete" Type="Boolean" />
+    <Property Name="phone" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <NavigationProperty Name="Imports" Relationship="ProjectWebModel.FK_Import_ImportUnit" FromRole="ImportUnit" ToRole="Import" />
+  </EntityType>
+  <EntityType Name="OrderDetail">
+    <Key>
+      <PropertyRef Name="order_detail_id" />
+    </Key>
+    <Property Name="order_detail_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="order_id" Type="Int32" />
+    <Property Name="product_id" Type="Int32" />
+    <Property Name="product_price" Type="Double" />
+    <Property Name="amount" Type="Int32" />
+    <Property Name="discount" Type="Int32" />
+    <Property Name="is_delete" Type="Boolean" />
+    <Property Name="warehouse_id" Type="Int32" />
+    <NavigationProperty Name="Order" Relationship="ProjectWebModel.FK_OrderDetail_Order" FromRole="OrderDetail" ToRole="Order" />
+    <NavigationProperty Name="Warehouse" Relationship="ProjectWebModel.FK_OrderDetail_Warehouse" FromRole="OrderDetail" ToRole="Warehouse" />
+  </EntityType>
+  <EntityType Name="Order">
+    <Key>
+      <PropertyRef Name="order_id" />
+    </Key>
+    <Property Name="order_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="user_id" Type="Int32" />
+    <Property Name="user_phone" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="user_address" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="user_note" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="total" Type="Double" />
+    <Property Name="order_code" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="order_status" Type="Int32" />
+    <Property Name="order_createdate" Type="DateTime" Precision="3" />
+    <Property Name="order_updatedate" Type="DateTime" Precision="3" />
+    <Property Name="buyer_name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="phone" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="addressto" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="note" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="customer_pay" Type="Double" />
+    <Property Name="type" Type="Int32" />
+    <Property Name="keycode" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="discount" Type="Int32" />
+    <Property Name="refuse" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <NavigationProperty Name="OrderDetails" Relationship="ProjectWebModel.FK_OrderDetail_Order" FromRole="Order" ToRole="OrderDetail" />
+  </EntityType>
+  <EntityType Name="ProductImg">
+    <Key>
+      <PropertyRef Name="productimg_id" />
+    </Key>
+    <Property Name="productimg_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="url" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="product_id" Type="Int32" />
+    <Property Name="color" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="is_delete" Type="Boolean" />
+    <Property Name="status" Type="Int32" />
+    <Property Name="create_date" Type="DateTime" Precision="3" />
+    <Property Name="update_date" Type="DateTime" Precision="3" />
+    <NavigationProperty Name="Product" Relationship="ProjectWebModel.FK_ProductImg_Product" FromRole="ProductImg" ToRole="Product" />
+    <NavigationProperty Name="Warehouses" Relationship="ProjectWebModel.FK_Warehouse_ProductImg" FromRole="ProductImg" ToRole="Warehouse" />
+  </EntityType>
+  <EntityType Name="Product">
+    <Key>
+      <PropertyRef Name="product_id" />
+    </Key>
+    <Property Name="product_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="product_name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="product_describe" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="product_price" Type="Double" />
+    <Property Name="product_status" Type="Int32" />
+    <Property Name="brand_id" Type="Int32" />
+    <Property Name="is_delete" Type="Boolean" />
+    <Property Name="discount" Type="Int32" />
+    <Property Name="create_date" Type="DateTime" Precision="3" />
+    <Property Name="update_date" Type="DateTime" Precision="3" />
+    <Property Name="avatar_url" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="type" Type="Int32" />
+    <NavigationProperty Name="Brand" Relationship="ProjectWebModel.FK_Product_Brand" FromRole="Product" ToRole="Brand" />
+    <NavigationProperty Name="ProductImgs" Relationship="ProjectWebModel.FK_ProductImg_Product" FromRole="Product" ToRole="ProductImg" />
+  </EntityType>
+  <EntityType Name="Promotion">
+    <Key>
+      <PropertyRef Name="prom_id" />
+    </Key>
+    <Property Name="prom_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="prom_keycode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="prom_amount" Type="Int32" />
+    <Property Name="prom_startdate" Type="DateTime" Precision="3" />
+    <Property Name="prom_expirationdate" Type="DateTime" Precision="3" />
+    <Property Name="prom_discount" Type="Int32" />
+    <Property Name="is_delete" Type="Boolean" />
+  </EntityType>
+  <EntityType Name="Size">
+    <Key>
+      <PropertyRef Name="size_id" />
+    </Key>
+    <Property Name="size_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="VN" Type="Double" />
+    <Property Name="US" Type="Double" />
+    <Property Name="UK" Type="Double" />
+    <Property Name="type" Type="Int32" />
+    <NavigationProperty Name="Warehouses" Relationship="ProjectWebModel.FK_Warehouse_Size" FromRole="Size" ToRole="Warehouse" />
+  </EntityType>
+  <EntityType Name="Slide">
+    <Key>
+      <PropertyRef Name="slide_id" />
+    </Key>
+    <Property Name="slide_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="slide_urlfile" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="slide_name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="slide_status" Type="Int32" />
+    <Property Name="is_delete" Type="Boolean" />
+    <Property Name="ordernumber" Type="Int32" />
+  </EntityType>
+  <EntityType Name="sysdiagram">
+    <Key>
+      <PropertyRef Name="diagram_id" />
+    </Key>
+    <Property Name="name" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+    <Property Name="principal_id" Type="Int32" Nullable="false" />
+    <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="version" Type="Int32" />
+    <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
+  </EntityType>
+  <EntityType Name="User">
+    <Key>
+      <PropertyRef Name="user_id" />
+    </Key>
+    <Property Name="user_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="user_name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="user_fullname" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="user_birthday" Type="DateTime" Precision="3" />
+    <Property Name="user_phone" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="user_address" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="user_note" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="user_email" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="user_password" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="user_gender" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="user_role_id" Type="Int32" />
+    <Property Name="is_delete" Type="Boolean" />
+    <NavigationProperty Name="Carts" Relationship="ProjectWebModel.FK_Cart_User" FromRole="User" ToRole="Cart" />
+  </EntityType>
+  <EntityType Name="Warehouse">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="amount" Type="Int32" />
+    <Property Name="create_date" Type="DateTime" Precision="3" />
+    <Property Name="update_date" Type="DateTime" Precision="3" />
+    <Property Name="status" Type="Int32" />
+    <Property Name="is_delete" Type="Boolean" />
+    <Property Name="discount" Type="Int32" />
+    <Property Name="code" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="sold" Type="Int32" />
+    <Property Name="product_id" Type="Int32" />
+    <Property Name="productimg_id" Type="Int32" />
+    <Property Name="size_id" Type="Int32" />
+    <NavigationProperty Name="Carts" Relationship="ProjectWebModel.FK_Cart_Warehouse" FromRole="Warehouse" ToRole="Cart" />
+    <NavigationProperty Name="ImportDetails" Relationship="ProjectWebModel.FK_ImportDetail_Warehouse" FromRole="Warehouse" ToRole="ImportDetail" />
+    <NavigationProperty Name="OrderDetails" Relationship="ProjectWebModel.FK_OrderDetail_Warehouse" FromRole="Warehouse" ToRole="OrderDetail" />
+    <NavigationProperty Name="ProductImg" Relationship="ProjectWebModel.FK_Warehouse_ProductImg" FromRole="Warehouse" ToRole="ProductImg" />
+    <NavigationProperty Name="Size" Relationship="ProjectWebModel.FK_Warehouse_Size" FromRole="Warehouse" ToRole="Size" />
+  </EntityType>
+  <Association Name="FK_Product_Brand">
+    <End Type="ProjectWebModel.Brand" Role="Brand" Multiplicity="0..1" />
+    <End Type="ProjectWebModel.Product" Role="Product" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Brand">
+        <PropertyRef Name="brand_id" />
+      </Principal>
+      <Dependent Role="Product">
+        <PropertyRef Name="brand_id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Cart_User">
+    <End Type="ProjectWebModel.User" Role="User" Multiplicity="0..1" />
+    <End Type="ProjectWebModel.Cart" Role="Cart" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="User">
+        <PropertyRef Name="user_id" />
+      </Principal>
+      <Dependent Role="Cart">
+        <PropertyRef Name="user_id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Cart_Warehouse">
+    <End Type="ProjectWebModel.Warehouse" Role="Warehouse" Multiplicity="0..1" />
+    <End Type="ProjectWebModel.Cart" Role="Cart" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Warehouse">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="Cart">
+        <PropertyRef Name="warehouse_id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_ImportDetail_Import">
+    <End Type="ProjectWebModel.Import" Role="Import" Multiplicity="0..1" />
+    <End Type="ProjectWebModel.ImportDetail" Role="ImportDetail" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Import">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="ImportDetail">
+        <PropertyRef Name="import_id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_ImportDetail_Warehouse">
+    <End Type="ProjectWebModel.Warehouse" Role="Warehouse" Multiplicity="0..1" />
+    <End Type="ProjectWebModel.ImportDetail" Role="ImportDetail" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Warehouse">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="ImportDetail">
+        <PropertyRef Name="warehouse_id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Import_ImportUnit">
+    <End Type="ProjectWebModel.ImportUnit" Role="ImportUnit" Multiplicity="0..1" />
+    <End Type="ProjectWebModel.Import" Role="Import" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="ImportUnit">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="Import">
+        <PropertyRef Name="importunit_id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_OrderDetail_Order">
+    <End Type="ProjectWebModel.Order" Role="Order" Multiplicity="0..1" />
+    <End Type="ProjectWebModel.OrderDetail" Role="OrderDetail" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Order">
+        <PropertyRef Name="order_id" />
+      </Principal>
+      <Dependent Role="OrderDetail">
+        <PropertyRef Name="order_id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_OrderDetail_Warehouse">
+    <End Type="ProjectWebModel.Warehouse" Role="Warehouse" Multiplicity="0..1" />
+    <End Type="ProjectWebModel.OrderDetail" Role="OrderDetail" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Warehouse">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="OrderDetail">
+        <PropertyRef Name="warehouse_id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_ProductImg_Product">
+    <End Type="ProjectWebModel.Product" Role="Product" Multiplicity="0..1" />
+    <End Type="ProjectWebModel.ProductImg" Role="ProductImg" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Product">
+        <PropertyRef Name="product_id" />
+      </Principal>
+      <Dependent Role="ProductImg">
+        <PropertyRef Name="product_id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Warehouse_ProductImg">
+    <End Type="ProjectWebModel.ProductImg" Role="ProductImg" Multiplicity="0..1" />
+    <End Type="ProjectWebModel.Warehouse" Role="Warehouse" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="ProductImg">
+        <PropertyRef Name="productimg_id" />
+      </Principal>
+      <Dependent Role="Warehouse">
+        <PropertyRef Name="productimg_id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Warehouse_Size">
+    <End Type="ProjectWebModel.Size" Role="Size" Multiplicity="0..1" />
+    <End Type="ProjectWebModel.Warehouse" Role="Warehouse" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Size">
+        <PropertyRef Name="size_id" />
+      </Principal>
+      <Dependent Role="Warehouse">
+        <PropertyRef Name="size_id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+</Schema>

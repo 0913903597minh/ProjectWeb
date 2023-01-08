@@ -1,0 +1,312 @@
+﻿@using System.Web
+@using ProjectWeb.Configuration
+
+@{
+    ViewBag.Title = "Sản phẩm";
+    var brand = new ProjectWeb.Service.BrandService().GetAll();
+}
+
+<div id="content-row-36" class="nh-row   ">
+    <div class="container">
+        <div class="row">
+            <form class="col-sm-3 col-xs-12" id="search-form">
+                <div class="item_block" data-action="navigation/Navigation/category/12" data-method="get">
+                    <div class="col_left ">
+                        <div class=" box-left box ">
+                            <div class="title_style">
+                                <h3>
+                                    <i class="fa fa-bars hidden-sm hidden-xs" aria-hidden="true"></i>
+                                    Danh mục sản phẩm
+                                    <a href="javascript:void(0)" class="btn-view-nav-left fr show-mobile">
+                                        <i class="fa fa-bars" aria-hidden="true"></i>
+                                    </a>
+                                </h3>
+                                <div class="block-nav-left-mobile hidden-mobile">
+                                    <nav id="catalog-all-12" class="bs-docs-sidebar side-bar-left">
+                                        <input type="hidden" name="sex" value="@ViewBag.sex" />
+                                        <ul id="item-pro-ul-12" class="nav bs-docs-sidenav">
+                                            
+                                            <li class="border-bottom">
+                                                <a href="/ListProduct/Index?sex=1" class="item-sub-menu">
+                                                    <span class="name"></span>Nam
+                                                </a>
+                                                <a href="javascript:void(0)" class="btn-hide-toggle-sub-menu">
+                                                    <span class="caret"></span>
+                                                </a>
+                                            </li>
+
+                                            <li class="border-bottom">
+                                                <a href="/ListProduct/Index?sex=2" class="item-sub-menu">
+                                                    <span class="name"></span>Nữ
+                                                </a>
+                                                <a href="javascript:void(0)" class="btn-hide-toggle-sub-menu">
+                                                    <span class="caret"></span>
+                                                </a>
+                                            </li>
+
+                                            <li class="border-bottom">
+                                                <a href="/ListProduct/Index?sex=3" class="item-sub-menu">
+                                                    <span class="name"></span>Bé trai
+                                                </a>
+                                                <a href="javascript:void(0)" class="btn-hide-toggle-sub-menu">
+                                                    <span class="caret"></span>
+                                                </a>
+                                            </li>
+
+                                            <li class="border-bottom">
+                                                <a href="/ListProduct/Index?sex=4" class="item-sub-menu">
+                                                    <span class="name"></span>Bé gái
+                                                </a>
+                                                <a href="javascript:void(0)" class="btn-hide-toggle-sub-menu">
+                                                    <span class="caret"></span>
+                                                </a>
+                                            </li>
+
+                                        </ul>
+                                    </nav>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <script>
+                        $(function () {
+                            var cssValue = $("#item-pro-ul-12").offset().left + $("#item-pro-ul-12").width();
+                            var parsedCssValue = parseInt(cssValue);
+                            if (parsedCssValue >= 800) {
+                                $("#item-pro-ul-12").find('ul').addClass('menu-sub');
+                            }
+                            var pgurl = window.location.href;
+                            $("ul#item-pro-ul-12  li a").each(function () {
+
+                                if ($(this).attr("href") == pgurl || $(this).attr("href") == (pgurl + '/') || $(this).attr("href") == '') {
+                                    $(this).closest('li').addClass("active");
+                                    // Nếu con dc active thì phải active cha
+                                    $(this).closest('ul').show();
+                                    //show ul children
+                                    $(this).closest('li').children('ul').show();
+                                    $(this).closest('li').closest('ul').parent('li').addClass("active");
+                                    if ($(this).parent().attr("class") == 'active') {
+                                        nh_functions.activeMainMenu($(this).attr("href"));
+                                    }
+                                } else {
+                                    var ext = pgurl.split('/');
+                                    var ext2 = $(this).attr("href").split('/');
+                                    if (ext2[ext2.length - 2] == ext[ext.length - 2]) {
+                                        $(this).parent().addClass("active");
+                                        $(this).parent().parent().addClass("active");
+                                        $(this).parent().parent().parent().addClass("active");
+                                        $(this).parent().parent().parent().parent().addClass("active");
+                                    }
+                                }
+                            });
+                        });
+                    </script>
+                </div>
+                <div class="item_block" data-action="search/Search/formAdvancedSearch/19" data-method="get">
+                    <div class="box-left hidden-mobile advanced-product clear-both padding-t-15">
+                        <!--
+                                <ul class="nav_title clearfix">
+                                <li class="active">
+                                    <a href="#">
+                                                                Tìm kiếm nâng cao sản phẩm
+                                                        </a>
+
+                                </li>
+                            </ul>
+                            -->
+                        <div class="content-box-left">
+                            <form id="form-search-19" method="POST" action="" class="advanced-filter">
+
+                                <div class="box-left ">
+                                    <ul class="nav_title clearfix">
+                                        <li class="active">
+                                            <a >
+                                                Từ khóa
+                                            </a>
+
+                                            <a class="btn-toggle-cont-box-left" href="javascript:void(0)">
+                                                <i class="demo-icon fa-sharp fa-solid fa-minus"></i>
+                                                
+                                            </a>
+                                        </li>
+                                    </ul>
+
+                                    <div class="content-box-left">
+                                        <input id="key" name="key" class="keyword-filter form-control" type="text" value="@ViewBag.key" placeholder="Từ khóa tìm kiếm">
+                                    </div>
+                                </div>
+
+                                @*<div class="box-left ">
+                                    <ul class="nav_title clearfix">
+                                        <li class="active">
+                                            <a href="#">
+                                                Giá sản phẩm
+                                            </a>
+                                            <a class="btn-toggle-cont-box-left" href="javascript:void(0)">
+                                                <i class="demo-icon icon-minus-3"></i>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                    <div class="content-box-left" style="padding: 0 8px;">
+                                        <div class="clearfix margin-b-10">
+                                            <small class="from-price pull-left">0</small>
+                                            <small class="to-price pull-right">35,000,000</small>
+                                        </div>
+
+                                        <div id="price-range" class="ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all"><div class="ui-slider-range ui-widget-header ui-corner-all" style="left: 0%; width: 89.7436%;"></div><span class="ui-slider-handle ui-state-default ui-corner-all" tabindex="0" style="left: 0%;"></span><span class="ui-slider-handle ui-state-default ui-corner-all" tabindex="0" style="left: 89.7436%;"></span></div>
+                                        <div class="hidden">
+                                            <input name="price_range" class="price-range-input" type="hidden" value="0-35000000">
+                                        </div>
+                                    </div>
+                                </div>*@
+
+                                @*<div class="box-left ">
+                                    <ul class="nav_title clearfix">
+                                        <li class="active">
+                                            <a href="#">
+                                                Trạng thái
+                                            </a>
+                                            <a class="btn-toggle-cont-box-left" href="javascript:void(0)">
+                                                <i class="demo-icon icon-minus-3"></i>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                    <div class="content-box-left cont mCustomScrollbar">
+                                        <div class="me-select clearfix">
+                                            <div class="checkbox cooperative">
+                                                <input id="status_product-new" name="status_product[new]" class="form-group btn-click-search" type="checkbox" value="new">
+                                                <label class="icon-check" for="status_product-new">
+                                                    Mới về
+                                                </label>
+                                            </div>
+
+                                            <div class="checkbox">
+                                                <input id="status_product-hot" name="status_product[hot]" class="form-group btn-click-search" type="checkbox" value="hot">
+                                                <label class="icon-check" for="status_product-hot">
+                                                    Nổi bật
+                                                </label>
+                                            </div>
+
+                                            <div class="checkbox">
+                                                <input id="status_product-sale" name="status_product[sale]" class="form-group btn-click-search" type="checkbox" value="sale">
+                                                <label class="icon-check" for="status_product-sale">
+                                                    Đang giảm giá
+                                                </label>
+                                            </div>
+
+                                            <div class="checkbox">
+                                                <input id="status_product-stocking" name="status_product[stocking]" class="form-group btn-click-search" type="checkbox" value="stocking">
+                                                <label class="icon-check" for="status_product-stocking">
+                                                    Còn hàng
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>*@
+
+
+                                <div class="box-left ">
+                                    <ul class="nav_title clearfix">
+                                        <li class="active ">
+                                            <a href="">
+                                                Thương hiệu
+                                            </a>
+                                            <a class="btn-toggle-cont-box-left" href="javascript:void(0)">
+                                                <i class="demo-icon fa-sharp fa-solid fa-minus"></i>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                    <div class="content-box-left">
+                                        <div class="cont scrollbar" id="style-3">
+                                            <div class="me-select clearfix  force-overflow">
+                                                @foreach (var item in brand)
+                                                {
+                                                    <div class="checkbox">
+                                                        <input id="brand_@item.brand_id" name="brand" class="form-group btn-click-search" type="checkbox" placeholder="" value="@item.brand_id" onchange="LoadSearchList(1)">
+                                                        <label class="icon-check" for="brand_@item.brand_id"> @item.brand_name </label>
+                                                    </div>
+                                                }  
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                @*<div class="col-md-12 col-sm-12 col-xs-12">
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <span class="btn btn-danger refresh-filter" style="cursor: pointer;border-radius: 0;color: #ed1c24;color: #fff;">
+                                                <i class="fa fa-refresh" aria-hidden="true"></i>
+                                                Chọn lại
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>*@
+                            </form>
+                        </div>
+                    </div>
+
+                    <script type="text/javascript">
+                        $(document).ready(function () {
+                            nh_advanced_filter.init();
+                        });
+                    </script>
+
+                </div>
+
+                <!--<div class="item_block" data-action="products/ProductsBlock/productBlock/69" data-method="get">
+                    <div class="box-product ">
+                        <div class="tab-product" id="title-block-69">
+                            <h3>Sản phẩm nổi bật</h3>
+                            <p></p>
+                        </div>
+                        <div class="box-detail-list-product">
+                            <div class="row">
+
+                               <div class="item-product style-view-small clearfix    col-md-12 col-sm-12 col-xs-12 ">
+                                    <div class="col-xs-4 noPadding">
+                                        <div class="img border">
+                                            <a href="https://fs-02.web4s.vn/giay-chay-nu-lining-arcl0282-phoi-mau.html" title="#"><img src="https://fs-02.web4s.vn/uploads/plugin/product_items/157/thumb/thumb_350_199-13152948224030.jpg" alt="#"></a>
+                                        </div>-->
+                <!---->
+                <!--    <span class="status-product bg-red">HOT</span>-->
+                <!---->
+                <!--</div>
+                                    <div class="col-xs-8 noPadding">
+                                        <div class="info">
+                                            <h4 class="title-product">
+                                                <a href="https://fs-02.web4s.vn/giay-chay-nu-lining-arcl0282-phoi-mau.html" title="Giày chạy nữ Li-ning ARCL028-2 phối màu">Giày chạy nữ Li-ning ARCL028-2...</a>
+                                            </h4>
+
+                                            <div class="price">
+                                                <p class="price-well">
+                                                    876,000 ₫
+                                                </p>
+                                                <p class="price-before">
+                                                    976,000 ₫
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>-->
+
+                <div class="banner-left"> <img alt="" src="/uploads/plugin/custom_img/2018-06-09/custom-banner-left.jpg"></div>
+            </form>
+
+            <div class="col-sm-9 col-xs-12" id="search-list">  </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    LoadSearchList(1)
+    function LoadSearchList(page) {
+        var data = $("#search-form").serialize()
+        $("#search-list").load("/ListProduct/SearchList?page=" + page + "&" + data)
+    }
+</script>

@@ -1,0 +1,97 @@
+﻿@{
+    ViewBag.Title = "Nhà cung cấp";
+}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-6">
+            <h2>Nhà cung cấp</h2>
+        </div>
+        <div class="col-2  offset-4">
+            <button class="btn btn-success btn-block" onclick="AddImportUnit()">Thêm</button>
+        </div>
+    </div>
+
+    <div>
+        <div class="card shadow">
+            <div class="card-header">
+                <h6>
+                    Danh sách nhà cung cấp
+                </h6>
+            </div>
+            <div class="card-body">
+                @*<form>
+                        <div class="row">
+                            <div class="col-4">
+                                <input type="text" class="form-control" placeholder="Nhập tên hãng giày" title="Nhập tên hãng giày" maxlength="255" name="keysearch" value="@ViewBag.keysearch" />
+                            </div>
+                            <div class="col-2 offset-6">
+                                <button class="btn btn-primary btn-block" type="submit">Tìm kiếm</button>
+                            </div>
+                        </div>
+                    </form>*@
+                <div class="row mt-3">
+                    <div class="col-12" id="list-importunit">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@*Modal*@
+<div class="modal fade bd-example-modal-lg" id="modal-form-lg" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" id="content-form-lg">
+
+        </div>
+    </div>
+</div>
+<div class="modal fade bd-example-modal-md" id="modal-form-md" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content" id="content-form-md">
+
+        </div>
+    </div>
+</div>
+<div class="modal fade bd-example-modal-sm" id="modal-form-sm" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content" id="content-form-sm">
+
+        </div>
+    </div>
+</div>
+
+<script>
+    loadListImportUnit()
+    function loadListImportUnit() {
+        $("#list-importunit").load("/Admin/ImportUnit/ListImportUnit?page=@ViewBag.page")
+    }
+    function AddImportUnit() {
+        /*loading(true)*/
+        $("#content-form-md").load("/Admin/ImportUnit/AddImportUnit?id", function (response) {
+            $("#modal-form-md").modal('show');
+        });
+        /*loading(false)*/
+    }
+    function EditImportUnit(id) {
+        /*loading(true)*/
+        $("#content-form-md").load("/Admin/ImportUnit/AddImportUnit?id=" + id, function (response) {
+            $("#modal-form-md").modal('show');
+        });
+        /*loading(false)*/
+    }
+    function AddImport(id) {
+        /*loading(true)*/
+        $("#content-form-md").load("/Admin/Import/AddImport?importunitid=" + id, function (response) {
+            $("#modal-form-md").modal('show');
+        });
+        /*loading(false)*/
+    }
+    function ShowListImport(id) {
+        $("#content-form-lg").html(" <div class='modal-header'><h6 class='modal-title'>Danh sách nhập hàng</h6><button type='button' class='close' data-dismiss='modal' aria-label='Close'><span aria-hidden='true'>×</span></button></div><div class='modal-body'><div class='row'><div class='col-12' id='list-import'></div></div></div><div class='modal-footer'><button type='button' data-dismiss='modal' class='btn btn-light'>Đóng</button></div>")
+        $("#list-import").load("/Admin/Import/ListImport?importunitid=" + id)
+    }
+    $("#navImport").addClass("active")
+    $("#navImportShow").addClass("show")
+    $("#iImportUnit").addClass("active")
+</script>

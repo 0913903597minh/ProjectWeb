@@ -1,0 +1,68 @@
+﻿@model Brand
+@{
+    Layout = null;
+}
+<form id="form-addbrand">
+    <div class="modal-header">
+        <h6 class="modal-title">Thông tin hãng</h6>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+        </button>
+    </div>
+
+    <div class="modal-body">
+        <div>
+            <input type="hidden" name="brand_id" value="@Model.brand_id" id="Id" />
+        </div>
+        <div class="form-group">
+            <label>Tên hãng<span class="text-danger">*</span></label>
+            @Html.EditorFor(model => model.brand_name, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.brand_name, "", new { @class = "text-danger" })
+        </div>
+        
+        @Html.ValidationMessage("error", new { @class = "text-danger" })
+        <div class="modal-footer">
+            <button type="button" onclick="sumbitBrand()" class="btn btn-primary">Lưu</button>
+            <button type="button" data-dismiss="modal" class="btn btn-light">Đóng</button>
+        </div>
+    </div> <!-- modal-body -->
+
+    <script>
+  
+        function sumbitBrand() {
+            /*loading(true)*/
+        var notify = ""
+        if (@Model.brand_id== 0) {
+            notify = "Thêm hãng thành công"
+
+        } else {
+            notify = "Sửa tên hãng thành công"
+        }
+            var $form = $("#form-addbrand");
+        $.ajax({
+            type: "POST",
+            url: "/Admin/Brand/AddBrand",
+            data: $form.serialize(),
+            success: async function (data, status, xhr) {
+                /*loading(false)*/
+                var statusCode = xhr.getResponseHeader("statusCode");
+                if (statusCode == '401') {
+                    window.location.replace("/login");
+                }
+                if (xhr.status == 201) {
+                    loadListBrand()
+
+                    $("#modal-form-md").modal("hide");
+                    Swal.fire({
+                        icon: 'success',
+                        title: notify,
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }
+                await $("#form-addbrand").html($(data).filter("#form-addbrand").html());
+            },
+        });
+    }
+    </script>
+</form>

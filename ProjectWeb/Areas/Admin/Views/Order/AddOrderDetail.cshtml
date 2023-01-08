@@ -1,0 +1,95 @@
+﻿@model OrderDetail
+@{
+    Layout = null;
+    List<string> listwarehouseid = ViewBag.listDatas;
+    ProjectWeb.Service.CartService cartService = new ProjectWeb.Service.CartService();
+
+}
+<form id="form-addorderdetail">
+    <div class="modal-header">
+        <h6 class="modal-title">Thêm sản phẩm vào giỏ</h6>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div>
+            <input type="hidden" name="order_detail_id" value="@Model.order_detail_id" id="Id" />
+        </div>
+        <div class="form-group">
+            <label>Sản phẩm<span class="text-danger">*</span></label>
+
+            <select class="form-control chosen-select" name="warehouse_id" id="@Model.warehouse_id" onchange="ChangeSelect()" >
+                @foreach (var item in ViewBag.Warehouse as List<Warehouse>)
+                {
+                    int maxamount = item.amount.Value ;
+                    <option value="@item.id" @(listwarehouseid.Contains(@item.id.ToString()) ? "disabled" : "" ) @(item.id == Model.warehouse_id?"selected":"") id="@item.id" val="@maxamount" >
+                       @item.code - @item.ProductImg.Product.product_name - @item.ProductImg.color -  ( VN : @item.Size.VN - US : @item.Size.US - UK : @item.Size.UK ) - SL : @maxamount
+                    </option>
+                }
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Số lượng<span class="text-danger">*</span></label>
+            <input type="number" min="1" name="amount" id="Amount" class="Amount form-control" value="@Model.amount" />
+            @Html.ValidationMessageFor(model => model.amount, "", new { @class = "text-danger" })
+        </div>
+        @Html.ValidationMessage("error", new { @class = "text-danger" }) 
+
+
+        <div class="modal-footer">
+            <button type="button" onclick="submitAddOrderDetail()" class="btn btn-primary">Lưu</button>
+            <button type="button" data-dismiss="modal" class="btn btn-light">Đóng</button>
+        </div>
+    </div><!-- modal-body -->
+    <script>
+        $(".chosen-select").chosen()
+        ChangeSelect()
+        function ChangeSelect() {
+            var id = $("select[name='WarehouseId']").val();
+            console.log($("#" + id).attr('val'))
+            $("#Amount").val('1');
+            $("#Amount").attr({ "max": $("#" + id).attr('val') });
+        }
+        function submitAddOrderDetail() {
+        /*loading(true)*/
+            var list = "";
+            try {
+                $(".row-orderdetail #WarehouseId").each(function () {
+                    list += $(this).val() + ",";
+                });
+            } catch (e) {
+                list = "";
+            }
+            var $form = $("#form-addorderdetail");
+            $.ajax({
+                type: "POST",
+                url: "/Admin/Order/AddOrderDetail",
+                data: $form.serialize() + "&list=" + list,
+                success: async function (data, status, xhr) {
+                   /* loading(false)*/
+                    console.log($(data).find("#form-addorderdetail").html())
+                    var statusCode = xhr.getResponseHeader("statusCode");
+                    if (statusCode == '401') {
+                        window.location.replace("/admin/login");
+                    }
+                    if (xhr.status == 201) {
+                        /*        loadListImportUnit()*/
+                        $("#modal-form-lg").modal("hide");
+                        $("#list-product").prepend(data)
+                        Update()
+                        //Swal.fire({
+                        //    icon: 'success',
+                        //    title: 'Thêm vào sản phẩm thành công',
+                        //    showConfirmButton: false,
+                        //    timer: 1500
+                        //})
+                    } else {
+                        await $("#form-addorderdetail").html($(data).filter("#form-addorderdetail").html());
+                   
+                    }
+                },
+            });
+        }
+    </script>
+</form>

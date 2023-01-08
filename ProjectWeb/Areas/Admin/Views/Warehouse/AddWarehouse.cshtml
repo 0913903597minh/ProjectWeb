@@ -1,0 +1,97 @@
+﻿@model Warehouse
+@{
+    Layout = null;
+}
+<form id="form-addwarehouse">
+    <div class="modal-header">
+        <h6 class="modal-title">Thông tin kích cỡ</h6>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+        </button>
+    </div>
+    <div class="modal-body">
+    <div class="row">
+        <div class="@(Model.id>0?"col-4":"col-12")">
+            <div class="row">
+                <h6>@ViewBag.ProductImg.Product.Name - @ViewBag.ProductImg.Color</h6>
+                
+                <label>@ViewBag.ProductImg.Url</label>
+                <input type="hidden" name="productimg_id" id="ProductImgId" value="@Model.productimg_id" />
+            </div>
+            <div>
+                <input type="hidden" name="id" value="@Model.id" id="Id" />
+            </div>
+            <div class="form-group">
+                <label>Kích cỡ<span class="text-danger">*</span></label>
+                @Html.EditorFor(model => model.Size, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Size, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
+                <label>Giảm giá</label>
+                @Html.EditorFor(model => model.discount, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.discount, "", new { @class = "text-danger" })
+            </div>
+            @Html.ValidationMessage("error", new { @class = "text-danger" })
+        </div>
+        @if (Model.id > 0) {
+            <div class="col-8" id="list-import">
+
+            </div>
+        }
+    </div>
+        <div class="modal-footer">
+            <button type="button" onclick="submitWarehouse()" class="btn btn-primary">Lưu</button>
+            <button type="button" data-dismiss="modal" class="btn btn-light">Đóng</button>
+        </div>
+    </div><!-- modal-body -->
+    <script>
+
+        function submitWarehouse() {
+        var notify = ""
+        if (@Model.id== 0) {
+            notify = "Thêm kích cỡ thành công"
+
+        } else {
+            notify = "Sửa kích cỡ thành công"
+        }
+            var $form = $("#form-addwarehouse");
+        $.ajax({
+            type: "POST",
+            url: "/Admin/Warehouse/AddWarehouse",
+            data: $form.serialize(),
+            success: async function (data, status, xhr) {
+                var statusCode = xhr.getResponseHeader("statusCode");
+                if (statusCode == '401') {
+                    window.location.replace("/login");
+                }
+                if (xhr.status == 201) {
+                  
+                    if (@Model.id> 0)
+                    {
+                        loadListWarehouse()
+                        $("#modal-form-lg").modal("hide");
+                    }else
+                    {
+                        $("#modal-form-md").modal("hide");
+                    } 
+                      
+                    Swal.fire({
+                        icon: 'success',
+                        title: notify,
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }
+                await $("#form-addwarehouse").html($(data).filter("#form-addwarehouse").html());
+            },
+        });
+        }
+        loadListImport(@Model.id);
+
+        function loadListImport(id) {
+            if(@Model.id>0){
+                $("#list-import").load("/Admin/Import/ListImport?warehouseid="+id)
+            }
+        }
+    </script>
+</form>

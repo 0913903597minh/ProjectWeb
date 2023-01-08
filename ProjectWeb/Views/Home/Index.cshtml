@@ -1,0 +1,306 @@
+﻿@model List<Slide>
+@{
+    ViewBag.Title = "Trang chủ";
+    string path = "https://localhost:44332/Images/Slider";
+}
+
+<link href="~/Content/Styles/Home/Style.css" rel="stylesheet" />
+
+<div id="content-row-0" class="nh-row nhslider ">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12 col-xs-12">
+                <div class="item_block" data-action="media/MediaPlugin/sliderGallery/7" data-method="get">
+                    <div class="mighty-slider mightyslider_modern_skin  mightySliderAnimate horizontal mightySlider">
+                        <a class="mSButtons mSPrev disabled"></a>
+                        <a class="mSButtons mSNext disabled"></a>
+                        <div class="frame mSFrame mSMouseDraggable" style="overflow: hidden;">
+                            <div class="slide_element mSSlideElement" style="transform: translateZ(0px) translateX(-5709px); width: 7612px;">
+                                @foreach (var item in Model)
+                                {
+                                    <div class="slide mSSlide" data-mightyslider="cover: '@(path+"/"+item.slide_urlfile)', link: { url: '#', target: '_self' }" data-msanimation="{ delay: 19000, style: { x: 0 } }, { delay: 5000, style: { x: '-100%' } }, { delay: 1900 }" msprocessed="1" mslastcover="@(path+"/"+item.slide_urlfile)" style="width: 1903px;" msslideloaded="1">
+                                        <div class="mSCover" style="background-image: url('@(path+"/"+item.slide_urlfile)'); background-size: auto;"></div>
+                                        <div class="mSCaption titres" data-mightyslider="" data-msanimation="{ delay: 1000, style: { x: 0 } }, { delay: 5000, style: { x: '-100%' } }, { delay: 1900 }" style="position: absolute; transform: translate3d(0px, 0px, 0px);"></div>
+                                        <a class="mSIcon mSLink" ondragstart="return false;" href="/ListProduct/Index" target="_self"></a>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <script type="text/javascript">
+/*<![CDATA[*/$(document).ready(function ($) {
+                                var animationOut = "random";
+                                var animationIn = "fadeIn";
+
+                                if (animationOut == 'random') {
+                                    animationOut = ['fadeOut', 'fadeOutDown', 'fadeOutUp', 'flipOutX', 'bounceOut', 'zoomOut', 'slideOutDown'];
+                                }
+
+                                if (animationIn == 'random') {
+                                    animationIn = ['fadeIn', 'fadeInDown', 'fadeInUp', 'flipInX', 'bounceIn', 'zoomIn', 'slideInDown'];
+                                }
+                                var isTouch = !!('ontouchstart' in window);
+                                var clickEvent = isTouch ? 'tap' : 'click';
+
+                                var $mighty_slider = $('.mighty-slider'),
+                                    $frame = $('.frame', $mighty_slider),
+                                    lastIndex = 0;
+                                $frame.mightySliderAnimate({
+                                    // Mixed options
+                                    speed: 1000,// Animations speed in milliseconds. 0 to disable animations.
+                                    preloadMode: 'all',// Preloading mode for slides covers. Can be: 'all', 'nearby', 'instant'.
+                                    startRandom: 0,// Starting offset in slides randomly, where: 1 = random, 0 = disable.
+                                    viewport: 'center',// Sets the cover image resizing method used to fit content within the viewport. Can be: 'center', 'fit', 'fill', 'stretch'.
+                                    easing: 'swing',// Easing for duration based (tweening) animations.
+                                    animateOut: animationOut,
+                                    animateIn: animationIn,
+                                    autoScale: 0, // Automatically updates slider height based on base width.
+                                    autoResize: 0,// Auto resize the slider when active slide is bigger than slider FRAME.
+                                    startAt: 0,          // Starting offset in slides.
+                                    startRandom: 0,          // Starting offset in slides randomly, where: 1 = random, 0 = disable.
+
+                                    // Navigation options
+                                    navigation: {
+                                        slideSize: '100%',
+                                        keyboardNavBy: 'slides'
+                                    },
+
+                                    //Thumbnails
+                                    thumbnails: {
+                                        thumbnailNav: 'forceCentered',
+                                        activateOn: clickEvent
+                                    },
+
+                                    // Pages
+                                    pages: {
+                                        activateOn: 'click'
+                                    },
+
+                                    // Dragging
+                                    dragging: {
+                                        touchDragging: 1,
+                                        onePage: 1,
+                                        swingSpeed: 0.1
+                                    },
+
+                                    // cycling
+                                    cycling: {
+                                        cycleBy: '', // Enable automatic cycling by 'slides' or 'pages'.
+                                        loop: 1,    // Repeat cycling when last slide/page is activated.
+                                        pauseTime: 5000,
+                                        pauseOnHover: 0,    // Pause cycling when mouse hovers over the FRAME.
+                                        startPaused: 0     // Whether to start in paused sate.
+                                    },
+
+                                    // Commands
+                                    commands: {
+                                        pages: 1,
+                                        thumbnails: 0,
+                                        buttons: 1
+                                    }
+                                },
+                                    {
+                                        active: function (name, index) {
+                                            if (lastIndex === index)
+                                                return false;
+
+                                            var self = this,
+                                                el = this.slides[index].element,
+                                                $videos = $('video', $mighty_slider),
+                                                $video = $('video', el);
+                                            video = $video[0];
+                                            $videos.unbind('ended').each(function () {
+                                                this.pause();
+                                            });
+
+                                            if (video && video.paused) {
+                                                if (video.currentTime !== 0)
+                                                    video.currentTime = 0;
+
+                                                video.play();
+
+                                                $video.one('ended', function () {
+                                                    if (index === self.slides.length - 1)
+                                                        self.activate('0');
+                                                    else
+                                                        self.next();
+                                                });
+                                            }
+
+                                            lastIndex = index;
+                                        },
+                                        coverLoaded: function (name, index) {
+                                            var self = this,
+                                                el = this.slides[index].element,
+                                                $video = $('video', el);
+                                            video = $video[0];
+
+                                            if (video) {
+                                                video.removeAttribute('loop');
+
+                                                if (self.relative.activeSlide !== index)
+                                                    video.pause();
+                                                else
+                                                    $video.one('ended', function () {
+                                                        if (index === self.slides.length - 1)
+                                                            self.activate('0');
+                                                        else
+                                                            self.next();
+                                                    });
+                                            }
+                                        }
+                                    });
+
+                                $(document).on(clickEvent, '.paper_watch', function () {
+                                    var $parent = $(this).parents('.mSSlide'),
+                                        $playIcon = $('.mSVideo', $parent);
+
+                                    $playIcon.trigger('click');
+                                });
+                            });/*]]>*/</script>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="content-row-47" class="nh-row   ">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 col-xs-12">
+                <div class="item_block" data-action="products/ProductsBlock/productBlock/14" data-method="get">
+                    <div class=" box-product-style2 tab-default-product clearfix">
+                        <!--<div class="tab-product clearfix">-->
+                        <div class="title-tab-product">
+                            <h3>Danh mục</h3>
+                            <p class="slogan-tab">Sản phẩm</p>
+                        </div>
+
+                        <div class="menu-tab-product">
+                            <ul class="tab-nav-left clearfix" id="sub-menu01" role="tablist" limit="3" list-type="list_default" display="" data-col="4" data-row="3" data-url="/products/ProductsBlock/ajaxLoadProductByTab/14">
+                                <li role="presentation" class="active">
+                                    <a class="tab-item" href="#male" role="tab" data-toggle="tab" aria-expanded="false" data-id="393" loaded="1"> Giày nam </a>
+                                </li>
+
+                                <li role="presentation" class="">
+                                    <a class="tab-item" href="#female" role="tab" data-toggle="tab" aria-expanded="false" data-id="389" loaded="1"> Giày nữ </a>
+                                </li>
+
+                                <li role="presentation" class="">
+                                    <a class="tab-item" href="#boy" role="tab" data-toggle="tab" aria-expanded="false" data-id="389" loaded="1"> Giày bé trai </a>
+                                </li>
+
+                                <li role="presentation" class="">
+                                    <a class="tab-item" href="#girl" role="tab" data-toggle="tab" aria-expanded="false" data-id="389" loaded="1"> Giày bé gái </a>
+                                </li>
+                            </ul>
+                        </div>
+                        <!--</div>-->
+                        @*<div class="content-tab-product">
+                                <div class="tab-content">
+
+                                    <div id="tab-block-14-393 " class="tab-pane"> </div>
+
+                                    <div id="tab-block-14-389 " class="tab-pane"> </div>
+                                </div>
+                            </div>*@
+                        <div class="content-tab-product">
+                            <div class="tab-content">
+                                <div id="male" class="tab-pane active"> </div>
+                                <div id="female" class="tab-pane"> </div>
+                                <div id="boy" class="tab-pane"> </div>
+                                <div id="girl" class="tab-pane"> </div>
+                            </div>
+                        </div>                       
+
+                        <div class="clearfix"></div>
+                        @*<div class="warp-loading-block hidden">
+                            <div class="warp-bg"></div>
+                            <div class="sk-cube-grid ajax-loading-icon">
+                                <div class="sk-cube sk-cube1"></div>
+                                <div class="sk-cube sk-cube2"></div>
+                                <div class="sk-cube sk-cube3"></div>
+                                <div class="sk-cube sk-cube4"></div>
+                                <div class="sk-cube sk-cube5"></div>
+                                <div class="sk-cube sk-cube6"></div>
+                                <div class="sk-cube sk-cube7"></div>
+                                <div class="sk-cube sk-cube8"></div>
+                                <div class="sk-cube sk-cube9"></div>
+                            </div>
+                        </div>*@
+                    </div>
+                    <script type="text/javascript">
+                        // select tab
+                        $('.tab-item').unbind('click').on('click', function () {
+                            if ($(this).attr('data-id') != 0 && $(this).attr('loaded') != 1) {
+                                var id_load = $(this).attr('href');
+                                var obj_options = $(this).closest('ul[role="tablist"]');
+                                var url = obj_options.attr('data-url');
+                                var data = {
+
+                                    element: $(this).attr('data-element'),
+                                    cat_id: $(this).attr('data-id'),
+                                    display: obj_options.attr('data-display'),
+                                    list_type: obj_options.attr('list-type'),
+                                    limit: obj_options.attr('limit'),
+                                    col: obj_options.attr('data-col'),
+                                    row: obj_options.attr('data-row'),
+                                    view: obj_options.attr('data-view'),
+                                    chunk: obj_options.attr('data-chunk'),
+                                    id_load: id_load
+                                };
+
+                                nh_functions.loadContentBlockTabs(url, data, id_load);
+                                $(this).attr('loaded', 1);
+
+                            }
+                        });
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row" id="topsell"> </div>
+
+<div id="content-row-54" class="nh-row  bg-banner-text ">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12 col-xs-12">
+                <div class="block-banner-text">
+                    <div class="row">
+                        <div class="col-md-6 col-sm-12 col-xs-12">
+                            <div class="des-banner">
+                                <p class="des-1">online&in-store</p>
+                                <h4>lựa chọn giày yêu thích</h4>
+                                <h2>tiết kiệm hơn <br /> chỉ có tại nơi đây</h2>
+                                <p><a class="buton" href="#">xem bộ sưu tập</a></p>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-sm-12 col-xs-12"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row" id="newproduct"> </div>
+
+<script>
+    LoadList();
+    function LoadList() {
+
+        $("#topsell").load("/Home/ListProduct?Type=@ProjectWeb.Configuration.ViewConfig.TOPSALE")
+        $("#newproduct").load("/Home/ListProduct?Type=@ProjectWeb.Configuration.ViewConfig.PRODUCTNEW")
+        $("#male").load("/Home/ListProduct?Type=@ProjectWeb.Configuration.ViewConfig.MALE")
+        $("#female").load("/Home/ListProduct?Type=@ProjectWeb.Configuration.ViewConfig.FEMALE")
+        $("#boy").load("/Home/ListProduct?Type=@ProjectWeb.Configuration.ViewConfig.BOY")
+        $("#girl").load("/Home/ListProduct?Type=@ProjectWeb.Configuration.ViewConfig.GIRL")
+
+    }
+
+</script>

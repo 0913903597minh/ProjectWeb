@@ -1,0 +1,293 @@
+﻿@{
+    ViewBag.Title = "AddImport";
+    ProjectWeb.Service.WarehouseService warehouseService = new ProjectWeb.Service.WarehouseService();
+
+    ViewBag.Title = "Thêm phiếu nhập kho";
+}
+@model ProjectWeb.Import
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-6">
+            <h2>Phiếu nhập kho</h2>
+        </div>
+    </div>
+
+    <form id="form-addimport" >
+        <div class="row">
+            <div class="col-12" id="success">
+                @Html.ValidationMessage("success", new { @id = "msgsuccess", @style = "font-size:20px" })
+            </div>
+            <div class="col-12" id="error">
+                @Html.ValidationMessage("error", new { @id = "msgerror", @style = "font-size:20px" })
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="card shadow">
+                    <div class="card-header">
+                        <div class="row">
+                            <h6>
+                                Thông tin phiếu nhập
+                            </h6>
+                        </div>
+
+                    </div>
+
+                    <div class="card-body">                      
+                        <div class="row mt-3">
+                            <div class="col-12" id="infoimport">
+                                <div class="form-group pb-3">
+                                    @if (Model.id < 1)
+                                    {
+                                        <label>Nhà cung cấp <span class="text-danger">*</span></label>
+                                        <select class="form-control chosen-select" id="ImportUnitId" name="importunit_id">
+                                            @foreach (var item in ViewBag.ImportUnit as List<ImportUnit>)
+                                            {
+                                                <option value="@item.id" @(item.id == Model.importunit_id.Value ? "selected" : "")>@item.name</option>
+                                            }
+                                        </select>
+                                        @Html.ValidationMessage("importunit_id", new { @class = "text-danger" })
+                                    }
+                                    else
+                                    {
+                                        <label>Nhà cung cấp : @(new ProjectWeb.Service.ImportUnitService().GetById(Model.importunit_id.Value).name)</label><br />
+                                        <label>Ngày tạo : @Model.create_date.Value.ToString("dd-MM-yyyy")</label>
+                                    }
+                                </div>
+                            </div>
+
+                            <div class="col-12" id="list_warehouse">
+                                <div class="form-group pb-3">
+                                    <div class="row mb-3">
+                                        <div class="col-6">
+                                            <label>Danh sách sản phẩm </label>
+                                        </div>
+                                        @if (Model.id < 1)
+                                        {
+                                            <div class="col-6 text-right">
+                                                <button type="button" onclick="AddImportDetail()" class="btn btn-success"><i class="fa fa-plus"></i></button>
+                                            </div>
+                                        }
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <table class="table table-bordered table-responsive-sm  table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th style="width:40%">Sản phẩm</th>
+                                                        <th style="width:20%">Số lượng</th>
+                                                        <th style="width:30%">Giá</th>
+                                                        <th style="width:10%"></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="list-product">
+                                                    @if (Model.ImportDetails.Count > 0)
+                                                    {
+                                                        foreach (var item in Model.ImportDetails)
+                                                        {
+                                                            <tr class="row-importdetail">
+                                                                <td>
+                                                                    @{
+                                                                        Warehouse warehouse = warehouseService.GetById(item.warehouse_id.Value);
+                                                                        <div class="form-group">
+                                                                            @if (Model.id < 1)
+                                                                            {
+                                                                                <input type="hidden" class="@warehouse.productimg_id" value="@warehouse.size_id" />
+                                                                                <input type="hidden" id="WarehouseId" class="WarehouseId" value="@item.warehouse_id" />
+                                                                            }
+                                                                            <h6 class="mb-0"> @warehouse.ProductImg.Product.product_name - @warehouse.ProductImg.color</h6>
+                                                                            <span class="text-muted font-weight-normal font-italic d-block" style="font-size:11px">VN : @warehouse.Size.VN - US : @warehouse.Size.US - UK : @warehouse.Size.UK</span>
+                                                                        </div>
+                                                                    }
+                                                                </td>
+                                                                <td>
+                                                                    @if (Model.id < 1)
+                                                                    {
+                                                                        <input type="number" class="Amount form-control" onchange="UpdateImport()" min="1" value="@item.amount" />
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        @item.amount
+                                                                    }
+                                                                </td>
+                                                                <td>
+                                                                    @if (Model.id < 1)
+                                                                    {
+                                                                        <input type="number" min="10000" onchange="UpdateImport()" class=" Price form-control" value="@item.price" />
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        @(string.Format("{0:#,0}", item.price)+ " VNĐ")
+                                                                    }
+
+                                                                </td>
+                                                                <td>
+                                                                    @if (Model.id < 1)
+                                                                    {
+                                                                        <a onclick="RemoveImport(this);"> <i class="fa fa-times"></i></a>
+                                                                    }
+                                                                </td>
+                                                            </tr>
+                                                        }
+                                                    }
+                                                    <tr>
+                                                        <td colspan="2">
+                                                            <b>Tổng tiền : </b>
+                                                        </td>
+                                                        <td colspan="2" class="Total">
+                                                            <h5 id="total-show" style="">
+                                                                <b>
+                                                                    @string.Format("{0:#,0}", Model.price) VNĐ
+                                                                </b>
+                                                            </h5>
+                                                            <input type="hidden" id="Total" name="Price" value="@Model.price" />
+                                                        </td>
+                                                    </tr>
+
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="card-footer">
+                        <div class="row justify-content-center">
+                            <div class="col-2">
+                                <button type="button" class="btn btn-block btn-outline-secondary" onclick="Back()">Trở lại</button>
+                            </div>
+                            @if (Model.id < 1)
+                            {
+                                <div class="col-2 col-lg-offset-2">
+                                    <button type="button" class="btn btn-block btn-primary" onclick="SubmitImport()">Tạo</button>
+                                </div>
+                            }
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <script>
+            if ($("#msgsuccess").html() != "") {
+                $("#success").addClass("alert alert-success")
+            }
+            if ($("#msgerror").html() != "") {
+                $("#error").addClass("alert alert-danger")
+            }
+            $("#navImport").addClass("active")
+            $("#navImportShow").addClass("show")
+            $("#iAddImport").addClass("active")
+        </script>
+    </form>
+</div>
+<div class="modal fade bd-example-modal-xl" id="modal-form-xl" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content" id="content-form-xl">
+
+        </div>
+    </div>
+</div>
+<div class="modal fade bd-example-modal-md" id="modal-form-md" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content" id="content-form-md">
+
+        </div>
+    </div>
+</div>
+<div class="modal fade bd-example-modal-sm" id="modal-form-sm" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content" id="content-form-sm">
+
+        </div>
+    </div>
+</div>
+<div class="modal fade bd-example-modal-lg" id="modal-form-lg" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" id="content-form-lg">
+
+        </div>
+    </div>
+</div>
+<script>
+    function AddImportDetail() {
+        /*loading(true)*/
+        $("#content-form-md").load("/Admin/ImportDetail/AddImportDetail", function (response) {
+            $("#modal-form-md").modal('show');
+            /*loading(false)*/
+        });
+    }
+    async function SubmitImport() {
+        /*loading(true)*/
+        await $("#list_warehouse .Amount").each(function (i) {
+            $(this).attr('name', "ImportDetails[" + i + "].Amount");
+        })
+
+        await $("#list_warehouse .Price").each(function (i) {
+            $(this).attr('name', "ImportDetails[" + i + "].Price");
+        })
+        await $("#list_warehouse .WarehouseId").each(function (i) {
+            $(this).attr('name', "ImportDetails[" + i + "].warehouse_id");
+        })
+        var $form = $("#form-addimport");
+        $.ajax({
+            type: "POST",
+            url: "/Admin/Import/AddImport",
+            data: $form.serialize(),
+            success: function (data, status, xhr) {
+                /*loading(false)*/
+                var statusCode = xhr.getResponseHeader("statusCode");
+                if (statusCode == '401') {
+                    window.location.replace("/admin/login");
+                }
+                if (xhr.status == 201) {
+                    
+                }
+                $("#form-addimport").html($(data).find("#form-addimport").html());
+
+            },
+        });
+    }
+    async function UpdateImport() {
+     
+        await $("#list_warehouse .Amount").each(function (i) {
+            $(this).attr('name', "ImportDetails[" + i + "].Amount");
+        })
+
+        await $("#list_warehouse .Price").each(function (i) {
+            $(this).attr('name', "ImportDetails[" + i + "].Price");
+        })
+        await $("#list_warehouse .WarehouseId").each(function (i) {
+            $(this).attr('name', "ImportDetails[" + i + "].warehouse_id");
+        })
+     
+        var $form = $("#form-addimport");
+        $.ajax({
+            type: "POST",
+            url: "/Admin/Import/UpdateImport",
+            data: $form.serialize(),
+            success: function (data, status, xhr) {
+                
+                var statusCode = xhr.getResponseHeader("statusCode");
+                if (statusCode == '401') {
+                    window.location.replace("/admin/login");
+                }
+                if (xhr.status == 201) {
+                }
+                $("#form-addimport").html($(data).find("#form-addimport").html());
+
+            },
+        });
+    }
+    function RemoveImport(item) {
+        $(item).closest('.row-importdetail').remove()
+        UpdateImport()
+    }
+    function Back() {
+        window.history.back();
+    }
+</script>

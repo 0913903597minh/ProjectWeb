@@ -1,0 +1,114 @@
+﻿@{
+    Layout = null;
+}
+@model ProjectWeb.Slide
+
+<form id="form-addslide" @*enctype="multipart/form-data" novalidate="novalidate" method="post" action="/ProductImg/AddProductImg"*@>
+    <div class="modal-header">
+        <h6 class="modal-title">Thông tin slide</h6>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div>
+            <input type="hidden" name="slide_id" value="@Model.slide_id" id="Id" />
+        </div>
+        <div class="form-group">
+            <label>Trạng thái<span class="text-danger">*</span></label>
+            <select class="form-control" name="slide_status" id="Status">
+                @foreach (var item in ProjectWeb.Configuration.SlideConfig.StatusToDictionaryStatus as Dictionary<int, string>)
+                {
+                    <option value="@item.Key" @(@item.Key ==  Model.slide_status ? "selected" : "")>@item.Value</option>
+                }
+            </select>
+            @Html.ValidationMessageFor(model => model.slide_status, "", new { @class = "text-danger" })
+        </div>
+        <div class="form-group">
+            <label>Ảnh mẫu</label>
+            <input type="file" name="slide_urlfile" id="UrlFile" class="UrlFile" value="@Model.slide_urlfile" />
+            @if (!string.IsNullOrEmpty(Model.slide_urlfile))
+            {
+                <div style="width:150px;height:150px">
+                    <img src="~/Images/Slider/@Model.slide_urlfile" id="imgshow" class="img-thumbnail">
+                </div>
+                @Html.ValidationMessageFor(model => model.slide_urlfile, "", new { @class = "text-danger" })
+            }
+            else
+            {
+                <div style="width:150px;height:150px">
+                    <img src="" style="display:none" id="imgshow" class="img-thumbnail">
+                </div>
+            }
+            @Html.ValidationMessageFor(model => model.slide_urlfile, "", new { @class = "text-danger" })
+        </div>
+
+
+        @Html.ValidationMessage("error", new { @class = "text-danger" })
+        <div class="modal-footer">
+            <button type="button" onclick="sumbitSlide()" class="btn btn-primary">Lưu</button>
+            <button type="button" data-dismiss="modal" class="btn btn-light">Đóng</button>
+        </div>
+    </div><!-- modal-body -->
+    <script>
+        if ($("#imgshow").height() > $("#imgshow").width()) {
+            $('#imgshow').attr('width', '100%');
+            $('#imgshow').attr('height', 'auto');
+        } else {
+            $('#imgshow').attr('height', '100%');
+            $('#imgshow').attr('width', 'auto');
+        }
+        $("#UrlFile").change(function () {
+        $('#imgshow').css('display', 'block');
+        if (this.files && this.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                $('#imgshow').attr('src', e.target.result);
+                if ($("#imgshow").height() > $("#imgshow").width()) {
+                    $('#imgshow').attr('width', '100%');
+                    $('#imgshow').attr('height', 'auto');
+                } else {
+                    $('#imgshow').attr('height', '100%');
+                    $('#imgshow').attr('width', 'auto');
+                }
+            }
+            reader.readAsDataURL(this.files[0]);
+        }
+    });
+        function sumbitSlide() {
+        var notify = ""
+        if (@Model.slide_id== 0) {
+            notify = "Thêm ảnh thành công"
+
+        } else {
+            notify = "Sửa ảnh thành công"
+            }
+            var img = new FormData($("#form-addslide")[0]);
+        $.ajax({
+            type: "POST",
+            url: "/Admin/Slide/AddSlide",
+            data: img,
+            contentType: false,
+            processData: false,
+            success: async function (data, status, xhr) {
+                var statusCode = xhr.getResponseHeader("statusCode");
+                if (statusCode == '401') {
+                    window.location.replace("/Admin/login");
+                }
+                if (xhr.status == 201) {
+                    loadListSlide();
+
+                    $("#modal-form-md").modal("hide");
+                    Swal.fire({
+                        icon: 'success',
+                        title: notify,
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }
+                await $("#form-addslide").html($(data).find("#form-addslide").html());
+            },
+        });
+    }
+    </script>
+</form>

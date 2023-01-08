@@ -1,0 +1,30 @@
+﻿@model OrderDetail
+    @{ 
+        ProjectWeb.Service.WarehouseService warehouseService = new ProjectWeb.Service.WarehouseService();
+    }
+<tr class="row-orderdetail">
+    <td>
+        @{
+            Warehouse warehouse = warehouseService.GetById(Model.warehouse_id.Value);
+                <div class="form-group">
+                    @{
+                        int maxamount = warehouse.amount.Value - (warehouse.OrderDetails != null ? warehouse.OrderDetails.Where(x => (x.is_delete == false || x.is_delete == null) && x.Order.order_status == ((int)ProjectWeb.Configuration.OrderConfig.Status.WAIT)).Sum(x => x.amount.Value) : 0); 
+                        }
+                    <input type="hidden" id="WarehouseId" class="WarehouseId" value="@Model.warehouse_id" />
+                    <h6 class="mb-0"> @warehouse.ProductImg.Product.product_name - @warehouse.ProductImg.color</h6>
+                    <span class="text-muted font-weight-normal font-italic d-block">VN : @warehouse.Size.VN - US : @warehouse.Size.US - UK : @warehouse.Size.UK</span>
+                </div>
+            }
+        </td>
+    <td>
+        @*@Model.Amount*@
+        <input type="number" class="Amount form-control" id="Amount" min="1" onchange="Update()" max="@maxamount" value="@Model.amount" />
+    </td>
+    <td>
+        @Model.product_price
+        <input type="hidden" class="Price" id="Price" value="@Model.product_price" />
+    </td>
+    <td>
+        <a onclick="Remove(this);"> <i class="fa fa-times"></i></a>
+    </td>
+</tr>

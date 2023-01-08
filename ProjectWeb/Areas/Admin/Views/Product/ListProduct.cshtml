@@ -1,0 +1,112 @@
+﻿@{
+    Layout = null;
+}
+@model IEnumerable<Product>
+@using PagedList;
+@using PagedList.Mvc;
+<style>
+    a {
+        cursor: pointer !important;
+    }
+</style>
+<table class="table table-bordered table-responsive-sm  table-hover">
+    <thead>
+        <tr>
+            <th>Tên</th>
+            <th>Giới tính</th>
+            <th>Hãng</th>
+            <th>Giá(VNĐ)</th>
+            <th>Giảm giá (%)</th>
+            <th>Đã bán</th>
+            <th>Còn lại</th>
+            <th>Trạng thái</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Count() == 0)
+        {
+            <tr>
+                <td colspan="9" class="text-center">
+                    <div class=" text-danger">
+                        Không có dữ liệu!
+                    </div>
+                </td>
+            </tr>
+        }
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @item.product_name
+                </td>
+                <td>
+                    @ProjectWeb.Configuration.UserConfig.StatusToDictionarySex[item.type.Value]
+                </td>
+                @if (item.brand_id.HasValue)
+                {
+                    <td>
+                        @item.Brand.brand_name
+                    </td>
+                }
+                else
+                {
+                    <td>
+                    </td>
+                }
+                <td>
+                    @string.Format("{0:#,0}", item.product_price) VNĐ
+                </td>
+                <td>
+                    @item.discount
+                </td>
+                <td>
+                    @item.ProductImgs.Where(x => (x.is_delete == null || x.is_delete == false)).Sum(m => m.Warehouses.Sum(x => x.sold))
+                </td>
+                <td>
+                    @{
+                        int allamount = 0;
+                        if (item.ProductImgs != null)
+                        {
+                            foreach (var img in item.ProductImgs.Where(x => (x.is_delete == false || x.is_delete == null) && (x.status == 1)))
+                            {
+                                if (img.Warehouses != null)
+                                {
+                                    allamount += img.Warehouses.Sum(x => x.amount.Value);
+                                }
+                            }
+                        }
+                    }
+                    @allamount
+                </td>
+                <td>
+                    @ProjectWeb.Configuration.ProductConfig.StatusToDictionarySelect[item.product_status.Value]
+                </td>
+                <td>
+                    <div class="btn-group">
+                        <a data-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-fw fa-wrench"></i>
+                        </a>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" onclick="window.location.href = '/Admin/Product/AddProduct?Id=@item.product_id'">Sửa</a>
+                            <a class="dropdown-item" onclick="DeleteProduct(@item.product_id)">Xóa</a>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        }
+
+    </tbody>
+</table>
+<div class="col-md-12">
+    <div class="row float-right">
+        @*phân trang*@
+        @Html.PagedListPager((IPagedList)Model,
+          page => Url.Action("Index", new { page = page, keysearch = ViewBag.keysearch, brandid = ViewBag.brandid, sex = ViewBag.sex, status = ViewBag.status }),
+         new PagedListRenderOptions
+         {
+             //HttpMethod = "GET",
+             //UpdateTargetId = "list-product",
+         })
+    </div>
+</div>
